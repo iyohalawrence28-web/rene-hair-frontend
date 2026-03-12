@@ -1,0 +1,12 @@
+.success-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 60px 40px; background: #faf9f7; }
+.success-card { max-width: 500px; width: 100%; text-align: center; padding: 60px 48px; border: 1px solid #e8e4df; background: #fff; }
+.success-card__icon { font-size: 2rem; color: #1a1614; margin-bottom: 24px; }
+.success-card__title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 2.2rem; font-weight: 600; color: #1a1614; margin: 0 0 12px; }
+.success-card__message { font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: #7a736d; margin: 0 0 36px; line-height: 1.6; }
+.success-card__order { border-top: 1px solid #e8e4df; padding-top: 28px; margin-bottom: 36px; text-align: left; }
+.success-card__order-id { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: #7a736d; margin: 0 0 16px; }
+.success-card__items { list-style: none; padding: 0; margin: 0 0 20px; }
+.success-card__item { display: flex; justify-content: space-between; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: #1a1614; padding: 8px 0; border-bottom: 1px solid #f0ece8; }
+.success-card__total { display: flex; justify-content: space-between; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700; color: #1a1614; padding-top: 16px; }
+.success-card__cta { display: inline-block; background: #1a1614; color: #faf9f7; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 14px 40px; text-decoration: none; transition: background 0.2s; }
+.success-card__cta:hover { background: #2d2624; }

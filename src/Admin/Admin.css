@@ -1,0 +1,418 @@
+/* Admin.css — René Hair Admin Panel */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --admin-bg: #0a0a0a;
+  --admin-surface: #111111;
+  --admin-surface-2: #1a1a1a;
+  --admin-border: #2a2a2a;
+  --admin-gold: #c9a96e;
+  --admin-gold-dim: #8a6e3e;
+  --admin-text: #e8e0d4;
+  --admin-text-dim: #6b6560;
+  --admin-danger: #c0392b;
+  --admin-success: #27ae60;
+  --admin-sidebar-w: 220px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--admin-bg);
+  font-family: 'DM Mono', monospace;
+  color: var(--admin-text);
+}
+
+/* ── Sidebar ── */
+.admin-sidebar {
+  width: var(--admin-sidebar-w);
+  background: var(--admin-surface);
+  border-right: 1px solid var(--admin-border);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.5rem 2rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--admin-gold);
+  border-bottom: 1px solid var(--admin-border);
+  margin-bottom: 1.5rem;
+}
+
+.admin-brand-icon {
+  font-size: 1rem;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0 0.75rem;
+  flex: 1;
+}
+
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 6px;
+  color: var(--admin-text-dim);
+  text-decoration: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+}
+
+.admin-nav-link:hover {
+  color: var(--admin-text);
+  background: var(--admin-surface-2);
+}
+
+.admin-nav-link.active {
+  color: var(--admin-gold);
+  background: rgba(201, 169, 110, 0.08);
+}
+
+.nav-icon {
+  font-size: 0.9rem;
+  width: 16px;
+  text-align: center;
+}
+
+.admin-sidebar-footer {
+  padding: 1rem 0.75rem 0;
+  border-top: 1px solid var(--admin-border);
+}
+
+/* ── Main ── */
+.admin-main {
+  margin-left: var(--admin-sidebar-w);
+  flex: 1;
+  padding: 2.5rem;
+  min-height: 100vh;
+}
+
+/* ── Page header ── */
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--admin-text);
+}
+
+.admin-page-subtitle {
+  font-size: 0.75rem;
+  color: var(--admin-text-dim);
+  margin-top: 0.2rem;
+}
+
+/* ── Cards ── */
+.admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.admin-stat-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+
+.admin-stat-label {
+  font-size: 0.7rem;
+  color: var(--admin-text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.admin-stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--admin-gold);
+}
+
+/* ── Table ── */
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  color: var(--admin-text-dim);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--admin-border);
+  color: var(--admin-text);
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background: var(--admin-surface-2);
+}
+
+.admin-table-img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface-2);
+}
+
+/* ── Buttons ── */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.admin-btn-primary {
+  background: var(--admin-gold);
+  color: #0a0a0a;
+}
+
+.admin-btn-primary:hover {
+  background: #d4b07a;
+}
+
+.admin-btn-ghost {
+  background: transparent;
+  color: var(--admin-text-dim);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-btn-ghost:hover {
+  color: var(--admin-text);
+  border-color: var(--admin-text-dim);
+}
+
+.admin-btn-danger {
+  background: transparent;
+  color: var(--admin-danger);
+  border: 1px solid transparent;
+}
+
+.admin-btn-danger:hover {
+  background: rgba(192, 57, 43, 0.1);
+  border-color: var(--admin-danger);
+}
+
+.admin-btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+}
+
+/* ── Badge ── */
+.admin-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-badge-green { background: rgba(39,174,96,0.12); color: #27ae60; }
+.admin-badge-yellow { background: rgba(241,196,15,0.12); color: #f1c40f; }
+.admin-badge-red { background: rgba(192,57,43,0.12); color: #c0392b; }
+.admin-badge-blue { background: rgba(52,152,219,0.12); color: #3498db; }
+.admin-badge-gray { background: rgba(107,101,96,0.2); color: var(--admin-text-dim); }
+
+/* ── Form ── */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 640px;
+}
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--admin-text-dim);
+}
+
+.admin-input,
+.admin-select,
+.admin-textarea {
+  background: var(--admin-surface-2);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  color: var(--admin-text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  transition: border-color 0.15s;
+  outline: none;
+  width: 100%;
+}
+
+.admin-input:focus,
+.admin-select:focus,
+.admin-textarea:focus {
+  border-color: var(--admin-gold-dim);
+}
+
+.admin-textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.admin-select option {
+  background: var(--admin-surface-2);
+}
+
+.admin-file-input {
+  background: var(--admin-surface-2);
+  border: 1px dashed var(--admin-border);
+  border-radius: 6px;
+  padding: 1rem;
+  color: var(--admin-text-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.admin-file-input:hover {
+  border-color: var(--admin-gold-dim);
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+/* ── Empty state ── */
+.admin-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--admin-text-dim);
+  font-size: 0.8rem;
+}
+
+.admin-empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}
+
+/* ── Loading ── */
+.admin-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: var(--admin-text-dim);
+  font-size: 0.8rem;
+}
+
+/* ── Alert ── */
+.admin-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  margin-bottom: 1rem;
+}
+
+.admin-alert-error {
+  background: rgba(192,57,43,0.1);
+  border: 1px solid rgba(192,57,43,0.3);
+  color: #e74c3c;
+}
+
+.admin-alert-success {
+  background: rgba(39,174,96,0.1);
+  border: 1px solid rgba(39,174,96,0.3);
+  color: #2ecc71;
+}
+
+/* ── Product image previews ── */
+.admin-image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.admin-image-preview {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+}

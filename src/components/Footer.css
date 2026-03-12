@@ -1,0 +1,63 @@
+/* ══════════════════════════════════════
+   Footer — René Hair
+══════════════════════════════════════ */
+
+.footer {
+  background: var(--brown1);
+  color: var(--brown5);
+  padding: 48px 28px 22px;
+  margin-top: auto;
+}
+
+.footer__inner { max-width: 1200px; margin: 0 auto; }
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 36px;
+  margin-bottom: 36px;
+}
+
+.footer__logo {
+  font-family: var(--font-serif);
+  font-size: 20px; font-weight: 600;
+  color: #fef8f0; margin-bottom: 10px;
+}
+.footer__logo em { font-style: italic; color: var(--brown4); }
+
+.footer__desc {
+  font-size: 12px; color: var(--brown5);
+  line-height: 1.65; opacity: .72;
+}
+
+.footer__col-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: #fef8f0; margin-bottom: 14px;
+}
+
+.footer__link {
+  display: block; font-size: 12px;
+  color: var(--brown5); opacity: .65;
+  margin-bottom: 7px; cursor: pointer;
+  text-decoration: none;
+  transition: opacity .2s;
+}
+.footer__link:hover { opacity: 1; }
+
+.footer__bottom {
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 18px;
+  font-size: 11px; color: var(--brown5); opacity: .42;
+  display: flex; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .footer__grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+}
+@media (max-width: 600px) {
+  .footer__grid { grid-template-columns: 1fr; gap: 20px; }
+  .footer__bottom { flex-direction: column; text-align: center; gap: 4px; }
+}

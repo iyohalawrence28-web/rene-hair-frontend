@@ -1,0 +1,246 @@
+/* ══════════════════════════════════════
+   ProductCard — René Hair design
+══════════════════════════════════════ */
+
+/* ── Card ── */
+.pc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+.pc:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--brown5);
+}
+
+/* ── Image ── */
+.pc__img-wrap {
+  position: relative;
+  height: 220px;
+  background: linear-gradient(135deg, #fde8d0, #f5d8bc);
+  overflow: hidden;
+}
+.pc__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+.pc:hover .pc__img { transform: scale(1.04); }
+
+.pc__img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 72px;
+}
+
+/* Try On pill — bottom right of image */
+.pc__tryon-pill {
+  position: absolute; bottom: 10px; right: 10px;
+  background: rgba(255, 253, 249, .93);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  padding: 5px 11px; border-radius: 7px;
+  font-size: 10px; font-weight: 600; color: var(--brown2);
+  cursor: pointer; transition: all .2s;
+  font-family: var(--font-sans);
+  display: flex; align-items: center; gap: 4px;
+}
+.pc__tryon-pill:hover {
+  background: var(--brown2); color: var(--white); border-color: var(--brown2);
+}
+
+/* Low stock badge — top left */
+.pc__stock-badge {
+  position: absolute; top: 10px; left: 10px;
+  background: var(--red); color: var(--white);
+  font-size: 9px; font-weight: 700;
+  padding: 3px 9px; border-radius: 5px;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+
+/* ── Body ── */
+.pc__body {
+  padding: 16px;
+  display: flex; flex-direction: column; flex: 1;
+}
+.pc__name {
+  font-family: var(--font-serif);
+  font-size: 16px; font-weight: 600;
+  color: var(--brown1); margin-bottom: 4px;
+}
+.pc__meta {
+  display: inline-block;
+  font-size: 11px; color: var(--text3); margin-bottom: 8px;
+}
+.pc__lengths {
+  display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.pc__len {
+  font-size: 10px; padding: 3px 7px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 5px; color: var(--text2); font-weight: 500;
+}
+.pc__desc {
+  font-size: 12px; color: var(--text3);
+  line-height: 1.55; margin-bottom: 12px; flex: 1;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ── Footer ── */
+.pc__footer {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: auto;
+  padding-top: 12px; border-top: 1px solid var(--border);
+}
+.pc__price {
+  font-family: var(--font-serif);
+  font-size: 22px; font-weight: 600; color: var(--brown2);
+}
+.pc__actions { display: flex; gap: 7px; }
+
+/* Buttons inside card */
+.pc__btn {
+  border: none; cursor: pointer;
+  font-family: var(--font-sans); font-weight: 600;
+  border-radius: 8px; transition: all .2s;
+  white-space: nowrap; font-size: 12px; padding: 8px 14px;
+}
+.pc__btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.pc__btn--ghost {
+  background: var(--brown6); color: var(--brown1);
+}
+.pc__btn--ghost:hover:not(:disabled) {
+  background: var(--brown2); color: var(--white);
+}
+.pc__btn--solid {
+  background: var(--brown2); color: var(--white);
+}
+.pc__btn--solid:hover:not(:disabled) {
+  background: var(--brown1);
+}
+.pc__btn--full {
+  width: 100%; padding: 14px; font-size: 14px;
+  border-radius: var(--radius-md);
+}
+
+/* ══════════════════════════════════════
+   Buy Now Modal content styles
+══════════════════════════════════════ */
+
+/* These rely on .overlay and .modal defined in index.css */
+
+.buynow-summary {
+  display: flex; justify-content: space-between; align-items: center;
+  margin: 16px 22px 0;
+  padding: 12px 14px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.buynow-product-name { font-size: 14px; font-weight: 600; color: var(--brown1); }
+.buynow-product-price {
+  font-family: var(--font-serif);
+  font-size: 18px; font-weight: 600; color: var(--brown2);
+}
+.buynow-subtitle {
+  padding: 10px 22px 0;
+  font-size: 12px; color: var(--text3); line-height: 1.5;
+}
+
+/* Form inside modal */
+.checkout-form {
+  padding: 16px 22px 22px;
+  display: flex; flex-direction: column; gap: 0;
+}
+.checkout-field { margin-bottom: 12px; }
+.checkout-label {
+  display: block;
+  font-size: 11px; font-weight: 600; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .05em;
+  margin-bottom: 5px;
+}
+.checkout-input {
+  width: 100%; padding: 10px 13px;
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text);
+  font-family: var(--font-sans); outline: none;
+  transition: border-color .15s;
+}
+.checkout-input:focus { border-color: var(--brown2); }
+.checkout-input--err { border-color: var(--red) !important; }
+.checkout-textarea { resize: vertical; min-height: 72px; }
+
+.field-error {
+  display: block; margin-top: 4px;
+  font-size: 11px; color: var(--red);
+}
+
+.checkout-cancel {
+  width: 100%; padding: 11px; margin-top: 8px;
+  background: none; border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 500; color: var(--text3);
+  cursor: pointer; font-family: var(--font-sans);
+  transition: all .2s;
+}
+.checkout-cancel:hover:not(:disabled) {
+  border-color: var(--brown3); color: var(--brown2);
+}
+
+/* ══════════════════════════════════════
+   Overlay + Modal (also used by CartDrawer)
+   Defined here as fallback if not in index.css
+══════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(44, 26, 14, .45);
+  backdrop-filter: blur(4px);
+  z-index: 800;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(44,26,14,.25);
+  animation: slideUp .25s ease;
+  scrollbar-width: none;
+}
+.modal::-webkit-scrollbar { display: none; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 22px 0;
+}
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 22px; font-weight: 600; color: var(--brown1);
+}
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text2); font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.modal-close:hover {
+  background: var(--brown2); color: var(--white); border-color: var(--brown2);
+}
+

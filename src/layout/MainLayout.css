@@ -1,0 +1,16 @@
+/* ══════════════════════════════════════
+   MainLayout — René Hair
+══════════════════════════════════════ */
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Push content below fixed navbar */
+.main-layout__content {
+  flex: 1;
+  padding-top: 62px; /* navbar height */
+}

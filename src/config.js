@@ -1,0 +1,1 @@
+export const API_BASE = "https://rene-hair-backend.onrender.com/api/products";
