@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "./AdminAuthContext";
 import "./Admin.css";
 
-import { API_BASE } from "../config";
+import { API_BASE, apiFetch } from "../config";
 
 export default function AdminLogin() {
   const { login } = useAdminAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,10 +20,10 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await apiFetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ email: form.email, password: form.password }),
       });
 
       const data = await res.json();
@@ -33,7 +33,7 @@ export default function AdminLogin() {
         return;
       }
 
-      login(data.token, data.username);
+      login(data.token, data.email);
       navigate("/admin");
     } catch (err) {
       setError("Something went wrong. Try again.");
@@ -79,12 +79,13 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div className="admin-field">
-            <label className="admin-label">Username</label>
+            <label className="admin-label">Email</label>
             <input
               className="admin-input"
-              value={form.username}
-              onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
-              placeholder="admin"
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+              placeholder="evafabluxhair@renehair.com"
               required
               autoFocus
             />
