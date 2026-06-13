@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Admin.css";
 
-import { API_BASE } from "../config";
+import { API_BASE, apiFetch } from "../config";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -11,7 +11,7 @@ export default function AdminProducts() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/products`);
+      const res = await apiFetch(`${API_BASE}/api/products`);
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -29,7 +29,7 @@ export default function AdminProducts() {
     if (!window.confirm("Delete this product?")) return;
     setDeleting(id);
     try {
-      const res = await fetch(`${API_BASE}/api/products/${id}`, {
+      const res = await apiFetch(`${API_BASE}/api/products/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
@@ -139,3 +139,4 @@ export default function AdminProducts() {
     </div>
   );
 }
+

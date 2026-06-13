@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Hero.css";
 
-import { API_BASE } from "../config";
+import { API_BASE, apiFetch } from "../config";
 
 const FALLBACK = [
   { emoji: "💇🏾‍♀️", name: "Body Wave Lace",  sub: '20" · Natural Black', price: "$350", bg: "ci1", badge: "New" },
@@ -15,7 +15,7 @@ export default function Hero({ onTryOnOpen }) {
   const [cards, setCards] = useState(FALLBACK);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/products`)
+    apiFetch(`${API_BASE}/api/products`)
       .then((r) => r.json())
       .then((data) => {
         const list = Array.isArray(data) ? data : (data.products ?? []);
@@ -91,4 +91,3 @@ export default function Hero({ onTryOnOpen }) {
     </section>
   );
 }
-

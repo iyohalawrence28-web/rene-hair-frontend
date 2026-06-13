@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Admin.css";
 
-import { API_BASE } from "../config";
+import { API_BASE, apiFetch } from "../config";
 
 const STATUS_COLORS = {
   processing: "admin-badge-gray",
@@ -21,7 +21,7 @@ export default function AdminOrders() {
   const [updating, setUpdating] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/orders`)
+    apiFetch(`${API_BASE}/api/orders`)
       .then((r) => r.json())
       .then(setOrders)
       .catch(console.error)
@@ -31,7 +31,7 @@ export default function AdminOrders() {
   const handleStatusChange = async (orderId, newStatus) => {
     setUpdating(orderId);
     try {
-      const res = await fetch(`${API_BASE}/api/orders/${orderId}/status`, {
+      const res = await apiFetch(`${API_BASE}/api/orders/${orderId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderStatus: newStatus }),

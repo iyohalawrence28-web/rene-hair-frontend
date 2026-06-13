@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import "./CartDrawer.css";
 
-import { API_BASE } from "../config";
+import { API_BASE, apiFetch } from "../config";
 const emptyForm = { name: "", email: "", phone: "", address: "" };
 
 export default function CartDrawer({ isOpen, onClose }) {
@@ -39,7 +39,7 @@ export default function CartDrawer({ isOpen, onClose }) {
 
     setCartLoading(true);
     try {
-      const orderRes = await fetch(`${API_BASE}/api/orders`, {
+      const orderRes = await apiFetch(`${API_BASE}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -55,7 +55,7 @@ export default function CartDrawer({ isOpen, onClose }) {
       });
       const order = await orderRes.json();
 
-      const stripeRes = await fetch(`${API_BASE}/api/stripe/checkout`, {
+      const stripeRes = await apiFetch(`${API_BASE}/api/stripe/checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId: order._id }),
@@ -203,3 +203,4 @@ export default function CartDrawer({ isOpen, onClose }) {
     </>
   );
 }
+

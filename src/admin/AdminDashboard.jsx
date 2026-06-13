@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Admin.css";
 
-import { API_BASE } from "../config";
+import { API_BASE, apiFetch } from "../config";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ products: 0, orders: 0, revenue: 0, pending: 0 });
@@ -13,8 +13,8 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         const [productsRes, ordersRes] = await Promise.all([
-          fetch(`${API_BASE}/api/products`),
-          fetch(`${API_BASE}/api/orders`),
+          apiFetch(`${API_BASE}/api/products`),
+          apiFetch(`${API_BASE}/api/orders`),
         ]);
         const products = await productsRes.json();
         const orders = await ordersRes.json();

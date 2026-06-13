@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./TryOnModal.css";
 
-import { API_BASE } from "../config";
+import { API_BASE, apiFetch } from "../config";
 
 export default function TryOnModal({ product: initialProduct, isOpen, onClose }) {
   const canvasRef      = useRef(null);
@@ -9,12 +9,10 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
   const hairImgRef     = useRef(null);
   const baseMetricsRef = useRef(null);
 
-  // Step 0 — style picker (only when no product passed in)
-  const [allProducts, setAllProducts]       = useState([]);
+  const [allProducts, setAllProducts]         = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // The active product — either passed in or chosen in step 0
   const product = initialProduct || selectedProduct;
 
   const [transform, setTransform]               = useState({ x: 0, y: 0, scale: 1, rotation: 0 });
@@ -24,17 +22,15 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
   const [uploadStatus, setUploadStatus]         = useState("");
   const [photoReady, setPhotoReady]             = useState(false);
 
-  // Email
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [emailInput, setEmailInput]         = useState("");
   const [emailSending, setEmailSending]     = useState(false);
   const [emailStatus, setEmailStatus]       = useState("");
 
-  // ── Fetch products for style picker when opened without a product ──
   useEffect(() => {
     if (isOpen && !initialProduct && allProducts.length === 0) {
       setLoadingProducts(true);
-      fetch(`${API_BASE}/api/products`)
+      apiFetch(`${API_BASE}/api/products`)
         .then((r) => r.json())
         .then((data) => {
           const list = Array.isArray(data) ? data : (data.products ?? []);
@@ -45,7 +41,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
     }
   }, [isOpen, initialProduct]);
 
-  // ── Full reset when modal closes ──
   useEffect(() => {
     if (!isOpen) {
       setSelectedProduct(null);
@@ -59,7 +54,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
     }
   }, [isOpen]);
 
-  // ── Canvas draw ──
   const drawScene = () => {
     const canvas  = canvasRef.current;
     if (!canvas) return;
@@ -80,7 +74,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
   };
   useEffect(() => { drawScene(); }, [transform]);
 
-  // ── Upload photo ──
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -123,13 +116,13 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
     try {
       const formData = new FormData();
       formData.append("image", file);
-      const uploadRes = await fetch(`${API_BASE}/api/tryon/upload`, { method: "POST", body: formData });
+      const uploadRes = await apiFetch(`${API_BASE}/api/tryon/upload`, { method: "POST", body: formData });
       if (!uploadRes.ok) { setUploadStatus("Upload failed. Try again."); return; }
       const uploadData = await uploadRes.json();
       const imageId = uploadData.imageId;
       if (!imageId) { setUploadStatus("Upload error. Try again."); return; }
 
-      const sessionRes = await fetch(`${API_BASE}/api/tryon/session`, {
+      const sessionRes = await apiFetch(`${API_BASE}/api/tryon/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -148,14 +141,13 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
     }
   };
 
-  // ── AI Generate ──
   const handleAIGenerate = async () => {
     if (!tryOnSessionId) { alert("Please upload a photo first."); return; }
     setAiGenerating(true);
     setAiGeneratedImage(null);
     setEmailStatus("");
     try {
-      const res = await fetch(`${API_BASE}/api/ai-tryon/generate`, {
+      const res = await apiFetch(`${API_BASE}/api/ai-tryon/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId: tryOnSessionId }),
@@ -175,13 +167,12 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
     }
   };
 
-  // ── Send Email ──
   const handleSendEmail = async () => {
     if (!emailInput || !emailInput.includes("@")) { setEmailStatus("Please enter a valid email."); return; }
     setEmailSending(true);
     setEmailStatus("");
     try {
-      const res = await fetch(`${API_BASE}/api/tryon/email`, {
+      const res = await apiFetch(`${API_BASE}/api/tryon/email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailInput, imageUrl: aiGeneratedImage, productId: product?._id }),
@@ -192,7 +183,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
     finally { setEmailSending(false); }
   };
 
-  // ── Share ──
   const shareText  = `I just tried on the "${product?.name}" wig from René Hair! 💇‍♀️✨`;
   const shareUrl   = window.location.href;
   const fullImgUrl = `${API_BASE}${aiGeneratedImage}`;
@@ -212,15 +202,12 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
 
   if (!isOpen) return null;
 
-  // ── Decide what step to show ──
-  // If no product selected yet (opened from hero/banner/navbar) → show style picker first
   const showPicker = !initialProduct && !selectedProduct;
 
   return (
     <div className="tm-overlay" onClick={onClose}>
       <div className="tm" onClick={(e) => e.stopPropagation()}>
 
-        {/* ── Header ── */}
         <div className="tm__header">
           <div>
             <div className="tm__pill">✨ AI Powered</div>
@@ -237,10 +224,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
 
         <div className="tm__body">
 
-          {/* ══════════════════════════════════
-              STEP 0 — Style Picker
-              (only shown when no product passed)
-          ══════════════════════════════════ */}
           {showPicker && (
             <div className="tm__picker">
               <p className="tm__picker-hint">
@@ -287,13 +270,8 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
             </div>
           )}
 
-          {/* ══════════════════════════════════
-              STEPS 1 & 2 — Upload + Generate
-              (shown once a product is known)
-          ══════════════════════════════════ */}
           {!showPicker && (
             <>
-              {/* Selected product summary (only when chosen from picker) */}
               {!initialProduct && selectedProduct && (
                 <div className="tm__selected-product">
                   <div className="tm__selected-img">
@@ -320,7 +298,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
                 </div>
               )}
 
-              {/* Step 1 — Upload */}
               <div className="tm__step">
                 <div className="tm__step-num">1</div>
                 <div className="tm__step-label">Upload your photo</div>
@@ -341,7 +318,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
 
               <canvas ref={canvasRef} style={{ display: "none" }} />
 
-              {/* Step 2 — Generate */}
               <div className="tm__step" style={{ marginTop: "18px" }}>
                 <div className="tm__step-num">2</div>
                 <div className="tm__step-label">Generate your look</div>
@@ -360,7 +336,6 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
                 ) : "✨ Generate AI Try-On"}
               </button>
 
-              {/* Result */}
               {aiGeneratedImage && (
                 <div className="tm__result">
                   <div className="tm__result-label">
@@ -433,3 +408,4 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
     </div>
   );
 }
+
