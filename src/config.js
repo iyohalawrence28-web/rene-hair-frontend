@@ -1,1 +1,1 @@
-export const API_BASE = "https://rene-hair-backend.onrender.com";
+export const API_BASE = "https://glitter-follicle-fiction.ngrok-free.dev";
