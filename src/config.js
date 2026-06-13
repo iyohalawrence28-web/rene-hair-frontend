@@ -1,10 +1,9 @@
-export const API_BASE = "https://glitter-follicle-fiction.ngrok-free.dev";
+export const API_BASE = "https://rene-hair-backend.onrender.com";
 
 export const apiFetch = (url, options = {}) => {
   return fetch(url, {
     ...options,
     headers: {
-      "ngrok-skip-browser-warning": "true",
       ...options.headers,
     },
   });
