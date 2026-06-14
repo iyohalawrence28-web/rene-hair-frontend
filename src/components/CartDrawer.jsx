@@ -3,6 +3,12 @@ import { useCart } from "../context/CartContext";
 import "./CartDrawer.css";
 
 import { API_BASE, apiFetch } from "../config";
+
+const getImageUrl = (img) => {
+  if (!img) return null;
+  return img.startsWith("http") ? img : `${API_BASE}${img}`;
+};
+
 const emptyForm = { name: "", email: "", phone: "", address: "" };
 
 export default function CartDrawer({ isOpen, onClose }) {
@@ -19,18 +25,13 @@ export default function CartDrawer({ isOpen, onClose }) {
 
   const validate = () => {
     const err = {};
-    if (!form.name.trim())                              err.name    = "Name is required";
-    if (!form.email.trim() || !form.email.includes("@")) err.email  = "Valid email is required";
-    if (!form.address.trim())                           err.address = "Address is required";
+    if (!form.name.trim())                               err.name    = "Name is required";
+    if (!form.email.trim() || !form.email.includes("@")) err.email   = "Valid email is required";
+    if (!form.address.trim())                            err.address = "Address is required";
     return err;
   };
 
   const handleClose = () => { setShowForm(false); setFormErrors({}); onClose(); };
-
-  const handleCheckoutClick = () => {
-    if (cart.length === 0) return;
-    setShowForm(true);
-  };
 
   const handleFormSubmit = async () => {
     const errors = validate();
@@ -44,12 +45,7 @@ export default function CartDrawer({ isOpen, onClose }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: cart.map((i) => ({ product: i._id, quantity: i.quantity, price: i.price })),
-          customer: {
-            name:    form.name.trim(),
-            email:   form.email.trim(),
-            phone:   form.phone.trim(),
-            address: form.address.trim(),
-          },
+          customer: { name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(), address: form.address.trim() },
           totalAmount: cartTotal,
         }),
       });
@@ -71,26 +67,15 @@ export default function CartDrawer({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className={`cd-backdrop${isOpen ? " cd-backdrop--on" : ""}`}
-        onClick={handleClose}
-      />
-
-      {/* Drawer */}
+      <div className={`cd-backdrop${isOpen ? " cd-backdrop--on" : ""}`} onClick={handleClose} />
       <aside className={`cd${isOpen ? " cd--open" : ""}`}>
-
-        {/* Header */}
         <div className="cd__header">
           <h2 className="cd__title">
-            {showForm ? "Your Details" : (
-              <>Your Cart {cart.length > 0 && <span className="cd__count">{cart.length}</span>}</>
-            )}
+            {showForm ? "Your Details" : (<>Your Cart {cart.length > 0 && <span className="cd__count">{cart.length}</span>}</>)}
           </h2>
           <button className="cd__close" onClick={handleClose}>✕</button>
         </div>
 
-        {/* ── Cart view ── */}
         {!showForm && (
           <>
             <div className="cd__body">
@@ -98,9 +83,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                 <div className="cd__empty">
                   <div className="cd__empty-icon">🛍️</div>
                   <p className="cd__empty-text">Your cart is empty</p>
-                  <button className="cd__continue-btn" onClick={handleClose}>
-                    Continue Shopping
-                  </button>
+                  <button className="cd__continue-btn" onClick={handleClose}>Continue Shopping</button>
                 </div>
               ) : (
                 <ul className="cd__items">
@@ -108,7 +91,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                     <li key={item._id} className="cd__item">
                       <div className="cd__item-img">
                         {item.images?.[0]
-                          ? <img src={`${API_BASE}${item.images[0]}`} alt={item.name} />
+                          ? <img src={getImageUrl(item.images[0])} alt={item.name} />
                           : <span>💇🏾‍♀️</span>}
                       </div>
                       <div className="cd__item-info">
@@ -129,30 +112,19 @@ export default function CartDrawer({ isOpen, onClose }) {
                 </ul>
               )}
             </div>
-
             {cart.length > 0 && (
               <div className="cd__footer">
-                <div className="cd__summary-row">
-                  <span>Shipping</span>
-                  <span className="cd__free">Free</span>
-                </div>
-                <div className="cd__total-row">
-                  <span>Total</span>
-                  <span className="cd__total-val">${cartTotal.toFixed(2)}</span>
-                </div>
-                <button className="cd__checkout-btn" onClick={handleCheckoutClick}>
-                  Checkout →
-                </button>
+                <div className="cd__summary-row"><span>Shipping</span><span className="cd__free">Free</span></div>
+                <div className="cd__total-row"><span>Total</span><span className="cd__total-val">${cartTotal.toFixed(2)}</span></div>
+                <button className="cd__checkout-btn" onClick={() => setShowForm(true)}>Checkout →</button>
               </div>
             )}
           </>
         )}
 
-        {/* ── Checkout form view ── */}
         {showForm && (
           <div className="cd__body cd__body--form">
             <p className="cd__form-subtitle">Enter your details to complete your order</p>
-
             <div className="cd__form">
               {[
                 { label: "Full Name *",     name: "name",  type: "text",  ph: "Jane Doe" },
@@ -169,7 +141,6 @@ export default function CartDrawer({ isOpen, onClose }) {
                   {formErrors[name] && <span className="cd__err">{formErrors[name]}</span>}
                 </div>
               ))}
-
               <div className="cd__field">
                 <label className="cd__label">Delivery Address *</label>
                 <textarea
@@ -179,21 +150,11 @@ export default function CartDrawer({ isOpen, onClose }) {
                 />
                 {formErrors.address && <span className="cd__err">{formErrors.address}</span>}
               </div>
-
-              <div className="cd__order-total">
-                <span>Order Total</span>
-                <strong>${cartTotal.toFixed(2)}</strong>
-              </div>
-
+              <div className="cd__order-total"><span>Order Total</span><strong>${cartTotal.toFixed(2)}</strong></div>
               <button className="cd__checkout-btn" onClick={handleFormSubmit} disabled={cartLoading}>
                 {cartLoading ? "Redirecting to payment..." : "Continue to Payment →"}
               </button>
-
-              <button
-                className="cd__back-btn"
-                onClick={() => { setShowForm(false); setFormErrors({}); }}
-                disabled={cartLoading}
-              >
+              <button className="cd__back-btn" onClick={() => { setShowForm(false); setFormErrors({}); }} disabled={cartLoading}>
                 ← Back to Cart
               </button>
             </div>
@@ -203,4 +164,5 @@ export default function CartDrawer({ isOpen, onClose }) {
     </>
   );
 }
+
 

@@ -6,6 +6,11 @@ import "./ProductCard.css";
 import { API_BASE, apiFetch } from "../config";
 const emptyForm = { name: "", email: "", phone: "", address: "" };
 
+const getImageUrl = (img) => {
+  if (!img) return null;
+  return img.startsWith("http") ? img : `${API_BASE}${img}`;
+};
+
 export default function ProductCard({ product, onTryOnOpen }) {
   const { addToCart } = useCart();
 
@@ -16,8 +21,7 @@ export default function ProductCard({ product, onTryOnOpen }) {
   const [form, setForm]             = useState(emptyForm);
   const [formErrors, setFormErrors] = useState({});
 
-  const imageUrl =
-    product.images?.length > 0 ? `${API_BASE}${product.images[0]}` : null;
+  const imageUrl = product.images?.length > 0 ? getImageUrl(product.images[0]) : null;
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -78,7 +82,6 @@ export default function ProductCard({ product, onTryOnOpen }) {
 
   return (
     <>
-      {/* ══ Product Card ══ */}
       <div className="pc">
         <div className="pc__img-wrap">
           {imageUrl ? (
@@ -114,11 +117,7 @@ export default function ProductCard({ product, onTryOnOpen }) {
               <button className="pc__btn pc__btn--ghost" onClick={handleAddToCart}>
                 {added ? "✓ Added!" : "Add to Cart"}
               </button>
-              <button
-                className="pc__btn pc__btn--solid"
-                onClick={() => setShowForm(true)}
-                disabled={loadingBuy}
-              >
+              <button className="pc__btn pc__btn--solid" onClick={() => setShowForm(true)} disabled={loadingBuy}>
                 Buy Now
               </button>
             </div>
@@ -126,28 +125,23 @@ export default function ProductCard({ product, onTryOnOpen }) {
         </div>
       </div>
 
-      {/* ══ Buy Now Modal ══ */}
       {showForm && (
         <div className="overlay" onClick={closeForm}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-
             <div className="modal-header">
               <h2 className="modal-title">Your Details</h2>
               <button className="modal-close" onClick={closeForm}>✕</button>
             </div>
-
             <div className="buynow-summary">
               <span className="buynow-product-name">{product.name}</span>
               <span className="buynow-product-price">${product.price.toFixed(2)}</span>
             </div>
-
             <p className="buynow-subtitle">Enter your details to complete your order</p>
-
             <div className="checkout-form">
               {[
-                { label: "Full Name *",       name: "name",    type: "text",  placeholder: "Jane Doe" },
-                { label: "Email Address *",   name: "email",   type: "email", placeholder: "jane@example.com" },
-                { label: "Phone Number",      name: "phone",   type: "tel",   placeholder: "+234 800 000 0000" },
+                { label: "Full Name *",     name: "name",  type: "text",  placeholder: "Jane Doe" },
+                { label: "Email Address *", name: "email", type: "email", placeholder: "jane@example.com" },
+                { label: "Phone Number",    name: "phone", type: "tel",   placeholder: "+234 800 000 0000" },
               ].map(({ label, name, type, placeholder }) => (
                 <div className="checkout-field" key={name}>
                   <label className="checkout-label">{label}</label>
@@ -159,7 +153,6 @@ export default function ProductCard({ product, onTryOnOpen }) {
                   {formErrors[name] && <span className="field-error">{formErrors[name]}</span>}
                 </div>
               ))}
-
               <div className="checkout-field">
                 <label className="checkout-label">Delivery Address *</label>
                 <textarea
@@ -169,18 +162,10 @@ export default function ProductCard({ product, onTryOnOpen }) {
                 />
                 {formErrors.address && <span className="field-error">{formErrors.address}</span>}
               </div>
-
-              <button
-                className="pc__btn pc__btn--solid pc__btn--full"
-                onClick={handleFormSubmit}
-                disabled={loadingBuy}
-              >
+              <button className="pc__btn pc__btn--solid pc__btn--full" onClick={handleFormSubmit} disabled={loadingBuy}>
                 {loadingBuy ? "Redirecting to payment..." : "Continue to Payment →"}
               </button>
-
-              <button className="checkout-cancel" onClick={closeForm} disabled={loadingBuy}>
-                Cancel
-              </button>
+              <button className="checkout-cancel" onClick={closeForm} disabled={loadingBuy}>Cancel</button>
             </div>
           </div>
         </div>

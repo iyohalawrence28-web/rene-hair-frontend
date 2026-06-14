@@ -3,6 +3,11 @@ import "./Hero.css";
 
 import { API_BASE, apiFetch } from "../config";
 
+const getImageUrl = (img) => {
+  if (!img) return null;
+  return img.startsWith("http") ? img : `${API_BASE}${img}`;
+};
+
 const FALLBACK = [
   { emoji: "💇🏾‍♀️", name: "Body Wave Lace",  sub: '20" · Natural Black', price: "$350", bg: "ci1", badge: "New" },
   { emoji: "🌊",     name: "Deep Wave HD",    sub: '18" · Dark Brown',    price: "$420", bg: "ci2" },
@@ -23,7 +28,7 @@ export default function Hero({ onTryOnOpen }) {
         setCards(
           list.slice(0, 4).map((p, i) => ({
             _id:   p._id,
-            image: p.images?.[0] ? `${API_BASE}${p.images[0]}` : null,
+            image: p.images?.[0] ? getImageUrl(p.images[0]) : null,
             emoji: FALLBACK[i]?.emoji ?? "💇🏾‍♀️",
             name:  p.name,
             sub:   `${p.availableLengths?.[0] ? `${p.availableLengths[0]}" · ` : ""}${p.texture || "Lace Wig"}`,
@@ -40,10 +45,7 @@ export default function Hero({ onTryOnOpen }) {
     <section className="hero">
       <div className="hero__blob hero__blob--1" />
       <div className="hero__blob hero__blob--2" />
-
       <div className="hero__inner">
-
-        {/* ── Left ── */}
         <div className="hero__left">
           <div className="hero__pill">✦ Premium Collection 2025</div>
           <h1 className="hero__title">Your <em>Crown</em>,<br />Your Story</h1>
@@ -53,9 +55,7 @@ export default function Hero({ onTryOnOpen }) {
           </p>
           <div className="hero__btns">
             <a href="#shop" className="hero__btn hero__btn--solid">Shop Collection</a>
-            <button className="hero__btn hero__btn--outline" onClick={() => onTryOnOpen()}>
-              ✨ Try AI Look
-            </button>
+            <button className="hero__btn hero__btn--outline" onClick={() => onTryOnOpen()}>✨ Try AI Look</button>
           </div>
           <div className="hero__stats">
             <div className="hero__stat"><span className="hero__stat-n">500+</span><span className="hero__stat-l">Happy Clients</span></div>
@@ -63,16 +63,11 @@ export default function Hero({ onTryOnOpen }) {
             <div className="hero__stat"><span className="hero__stat-n">4.9★</span><span className="hero__stat-l">Rating</span></div>
           </div>
         </div>
-
-        {/* ── Right ── */}
         <div className="hero__right">
           {cards.map((c) => (
             <div className="hero__card" key={c._id ?? c.name}>
               <div className={`hero__card-img ${c.bg}`}>
-                {c.image
-                  ? <img src={c.image} alt={c.name} className="hero__card-photo" />
-                  : <span>{c.emoji}</span>
-                }
+                {c.image ? <img src={c.image} alt={c.name} className="hero__card-photo" /> : <span>{c.emoji}</span>}
                 {c.badge && <span className="hero__card-badge">{c.badge}</span>}
                 <button className="hero__card-tryon" onClick={() => onTryOnOpen()}>✨ Try On</button>
               </div>
@@ -91,3 +86,4 @@ export default function Hero({ onTryOnOpen }) {
     </section>
   );
 }
+

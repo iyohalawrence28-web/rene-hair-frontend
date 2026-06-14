@@ -3,6 +3,11 @@ import "./TryOnModal.css";
 
 import { API_BASE, apiFetch } from "../config";
 
+const getImageUrl = (img) => {
+  if (!img) return null;
+  return img.startsWith("http") ? img : `${API_BASE}${img}`;
+};
+
 export default function TryOnModal({ product: initialProduct, isOpen, onClose }) {
   const canvasRef      = useRef(null);
   const userImgRef     = useRef(null);
@@ -125,11 +130,7 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
       const sessionRes = await apiFetch(`${API_BASE}/api/tryon/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productId: product?._id || undefined,
-          imageId,
-          source: "frontend",
-        }),
+        body: JSON.stringify({ productId: product?._id || undefined, imageId, source: "frontend" }),
       });
       if (!sessionRes.ok) { setUploadStatus("Session error. Try again."); return; }
       const sessionData = await sessionRes.json();
@@ -185,7 +186,7 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
 
   const shareText  = `I just tried on the "${product?.name}" wig from René Hair! 💇‍♀️✨`;
   const shareUrl   = window.location.href;
-  const fullImgUrl = `${API_BASE}${aiGeneratedImage}`;
+  const fullImgUrl = aiGeneratedImage ? getImageUrl(aiGeneratedImage) : "";
   const openShare  = (url) => window.open(url, "_blank");
 
   const handleShareInstagram = () => {
@@ -207,52 +208,33 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
   return (
     <div className="tm-overlay" onClick={onClose}>
       <div className="tm" onClick={(e) => e.stopPropagation()}>
-
         <div className="tm__header">
           <div>
             <div className="tm__pill">✨ AI Powered</div>
             <h2 className="tm__title">
-              {showPicker
-                ? "Pick a Style to Try On"
-                : product
-                  ? `Try On — ${product.name}`
-                  : "AI Try-On"}
+              {showPicker ? "Pick a Style to Try On" : product ? `Try On — ${product.name}` : "AI Try-On"}
             </h2>
           </div>
           <button className="tm__close" onClick={onClose}>✕</button>
         </div>
 
         <div className="tm__body">
-
           {showPicker && (
             <div className="tm__picker">
-              <p className="tm__picker-hint">
-                Choose a wig style first — the AI will show it on your photo
-              </p>
-
+              <p className="tm__picker-hint">Choose a wig style first — the AI will show it on your photo</p>
               {loadingProducts && (
                 <div className="tm__picker-loading">
                   <span className="tm__spinner" style={{ borderTopColor: "var(--brown2)" }} />
                   <span>Loading styles...</span>
                 </div>
               )}
-
-              {!loadingProducts && allProducts.length === 0 && (
-                <p className="tm__picker-empty">No styles available right now.</p>
-              )}
-
+              {!loadingProducts && allProducts.length === 0 && <p className="tm__picker-empty">No styles available right now.</p>}
               {!loadingProducts && allProducts.length > 0 && (
                 <div className="tm__picker-grid">
                   {allProducts.map((p) => (
-                    <button
-                      key={p._id}
-                      className="tm__picker-card"
-                      onClick={() => setSelectedProduct(p)}
-                    >
+                    <button key={p._id} className="tm__picker-card" onClick={() => setSelectedProduct(p)}>
                       <div className="tm__picker-img">
-                        {p.images?.[0]
-                          ? <img src={`${API_BASE}${p.images[0]}`} alt={p.name} />
-                          : <span>💇🏾‍♀️</span>}
+                        {p.images?.[0] ? <img src={getImageUrl(p.images[0])} alt={p.name} /> : <span>💇🏾‍♀️</span>}
                       </div>
                       <div className="tm__picker-info">
                         <div className="tm__picker-name">{p.name}</div>
@@ -276,64 +258,32 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
                 <div className="tm__selected-product">
                   <div className="tm__selected-img">
                     {selectedProduct.images?.[0]
-                      ? <img src={`${API_BASE}${selectedProduct.images[0]}`} alt={selectedProduct.name} />
+                      ? <img src={getImageUrl(selectedProduct.images[0])} alt={selectedProduct.name} />
                       : <span>💇🏾‍♀️</span>}
                   </div>
                   <div className="tm__selected-info">
                     <div className="tm__selected-name">{selectedProduct.name}</div>
                     <div className="tm__selected-meta">{selectedProduct.texture}</div>
                   </div>
-                  <button
-                    className="tm__change-btn"
-                    onClick={() => {
-                      setSelectedProduct(null);
-                      setTryOnSessionId(null);
-                      setPhotoReady(false);
-                      setUploadStatus("");
-                      setAiGeneratedImage(null);
-                    }}
-                  >
+                  <button className="tm__change-btn" onClick={() => { setSelectedProduct(null); setTryOnSessionId(null); setPhotoReady(false); setUploadStatus(""); setAiGeneratedImage(null); }}>
                     Change
                   </button>
                 </div>
               )}
 
-              <div className="tm__step">
-                <div className="tm__step-num">1</div>
-                <div className="tm__step-label">Upload your photo</div>
-              </div>
-
+              <div className="tm__step"><div className="tm__step-num">1</div><div className="tm__step-label">Upload your photo</div></div>
               <label className="tm__upload-zone">
                 <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
                 <div className="tm__upload-icon">📸</div>
-                <div className="tm__upload-text">
-                  {photoReady ? "✓ Photo uploaded — ready to generate!" : "Tap to select a clear face photo"}
-                </div>
+                <div className="tm__upload-text">{photoReady ? "✓ Photo uploaded — ready to generate!" : "Tap to select a clear face photo"}</div>
                 <div className="tm__upload-hint">JPEG or PNG · Front-facing works best</div>
               </label>
-
-              {uploadStatus && (
-                <p className={`tm__status${photoReady ? " tm__status--ok" : ""}`}>{uploadStatus}</p>
-              )}
-
+              {uploadStatus && <p className={`tm__status${photoReady ? " tm__status--ok" : ""}`}>{uploadStatus}</p>}
               <canvas ref={canvasRef} style={{ display: "none" }} />
 
-              <div className="tm__step" style={{ marginTop: "18px" }}>
-                <div className="tm__step-num">2</div>
-                <div className="tm__step-label">Generate your look</div>
-              </div>
-
-              <button
-                className="tm__generate-btn"
-                onClick={handleAIGenerate}
-                disabled={aiGenerating || !tryOnSessionId}
-              >
-                {aiGenerating ? (
-                  <span className="tm__generating">
-                    <span className="tm__spinner" />
-                    Generating your look... (~30s)
-                  </span>
-                ) : "✨ Generate AI Try-On"}
+              <div className="tm__step" style={{ marginTop: "18px" }}><div className="tm__step-num">2</div><div className="tm__step-label">Generate your look</div></div>
+              <button className="tm__generate-btn" onClick={handleAIGenerate} disabled={aiGenerating || !tryOnSessionId}>
+                {aiGenerating ? (<span className="tm__generating"><span className="tm__spinner" />Generating your look... (~30s)</span>) : "✨ Generate AI Try-On"}
               </button>
 
               {aiGeneratedImage && (
@@ -342,12 +292,10 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
                     <div className="tm__step-num">3</div>
                     <div className="tm__step-label">Your new look!</div>
                   </div>
-
                   <div className="tm__result-img-wrap">
                     <img src={fullImgUrl} alt="AI Try-On Result" className="tm__result-img" />
                     <span className="tm__result-badge">✨ AI Generated</span>
                   </div>
-
                   <div className="tm__share">
                     <p className="tm__share-label">Share your look</p>
                     <div className="tm__share-grid">
@@ -368,24 +316,16 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
                         Instagram
                       </button>
                     </div>
-
                     <div className="tm__share-row2">
                       <button className="tm__download-btn" onClick={handleDownload}>↓ Download Image</button>
                       {!showEmailInput ? (
                         <button className="tm__email-btn" onClick={() => setShowEmailInput(true)}>✉ Send to Email</button>
                       ) : (
                         <div className="tm__email-form">
-                          <input
-                            type="email" className="tm__email-input" placeholder="your@email.com"
-                            value={emailInput} onChange={(e) => setEmailInput(e.target.value)}
-                          />
+                          <input type="email" className="tm__email-input" placeholder="your@email.com" value={emailInput} onChange={(e) => setEmailInput(e.target.value)} />
                           <div className="tm__email-actions">
-                            <button className="tm__email-send" onClick={handleSendEmail} disabled={emailSending}>
-                              {emailSending ? "Sending..." : "Send"}
-                            </button>
-                            <button className="tm__email-cancel" onClick={() => { setShowEmailInput(false); setEmailStatus(""); }}>
-                              Cancel
-                            </button>
+                            <button className="tm__email-send" onClick={handleSendEmail} disabled={emailSending}>{emailSending ? "Sending..." : "Send"}</button>
+                            <button className="tm__email-cancel" onClick={() => { setShowEmailInput(false); setEmailStatus(""); }}>Cancel</button>
                           </div>
                           {emailStatus && <p className="tm__email-status">{emailStatus}</p>}
                         </div>
@@ -393,12 +333,7 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
                     </div>
                     {emailStatus && !showEmailInput && <p className="tm__email-status">{emailStatus}</p>}
                   </div>
-
-                  {product && (
-                    <button className="tm__shop-btn" onClick={onClose}>
-                      Shop {product.name} →
-                    </button>
-                  )}
+                  {product && <button className="tm__shop-btn" onClick={onClose}>Shop {product.name} →</button>}
                 </div>
               )}
             </>
