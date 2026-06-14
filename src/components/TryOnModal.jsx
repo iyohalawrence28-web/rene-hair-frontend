@@ -187,6 +187,8 @@ export default function TryOnModal({ product: initialProduct, isOpen, onClose })
   const shareText  = `I just tried on the "${product?.name}" wig from René Hair! 💇‍♀️✨`;
   const shareUrl   = window.location.href;
   const fullImgUrl = aiGeneratedImage ? getImageUrl(aiGeneratedImage) : "";
+  console.log("aiGeneratedImage:", aiGeneratedImage);
+  console.log("fullImgUrl:", fullImgUrl);
   const openShare  = (url) => window.open(url, "_blank");
 
   const handleShareInstagram = () => {
