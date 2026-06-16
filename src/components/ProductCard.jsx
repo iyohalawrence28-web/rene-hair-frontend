@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import TryOnModal from "./TryOnModal";
 import "./ProductCard.css";
+import { useNavigate } from "react-router-dom";
 
 import { API_BASE, apiFetch } from "../config";
 const emptyForm = { name: "", email: "", phone: "", address: "" };
@@ -13,8 +14,9 @@ const getImageUrl = (img) => {
 
 export default function ProductCard({ product, onTryOnOpen }) {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
-  const [loadingBuy, setLoadingBuy] = useState(false);
+  const [loading, setLoading]       = useState(false);
   const [added, setAdded]           = useState(false);
   const [tryOnOpen, setTryOnOpen]   = useState(false);
   const [showForm, setShowForm]     = useState(false);
@@ -36,9 +38,9 @@ export default function ProductCard({ product, onTryOnOpen }) {
 
   const validate = () => {
     const err = {};
-    if (!form.name.trim())                              err.name    = "Name is required";
-    if (!form.email.trim() || !form.email.includes("@")) err.email  = "Valid email is required";
-    if (!form.address.trim())                           err.address = "Address is required";
+    if (!form.name.trim())                               err.name    = "Name is required";
+    if (!form.email.trim() || !form.email.includes("@")) err.email   = "Valid email is required";
+    if (!form.address.trim())                            err.address = "Address is required";
     return err;
   };
 
@@ -48,7 +50,7 @@ export default function ProductCard({ product, onTryOnOpen }) {
     const errors = validate();
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
 
-    setLoadingBuy(true);
+    setLoading(true);
     try {
       const orderRes = await apiFetch(`${API_BASE}/api/orders`, {
         method: "POST",
@@ -62,21 +64,20 @@ export default function ProductCard({ product, onTryOnOpen }) {
             address: form.address.trim(),
           },
           totalAmount: product.price,
+          paymentStatus: "pending",
+          orderStatus: "processing",
         }),
       });
+
+      if (!orderRes.ok) throw new Error("Failed to place order");
       const order = await orderRes.json();
 
-      const stripeRes = await apiFetch(`${API_BASE}/api/stripe/checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: order._id }),
-      });
-      const { url } = await stripeRes.json();
-      window.location.href = url;
+      closeForm();
+      navigate(`/success?orderId=${order._id}`);
     } catch (err) {
       console.error(err);
-      alert("Payment failed. Please try again.");
-      setLoadingBuy(false);
+      alert("Something went wrong. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -100,7 +101,6 @@ export default function ProductCard({ product, onTryOnOpen }) {
         <div className="pc__body">
           <h3 className="pc__name">{product.name}</h3>
           {product.texture && <span className="pc__meta">{product.texture}</span>}
-
           {product.availableLengths?.length > 0 && (
             <div className="pc__lengths">
               {product.availableLengths.map((l) => (
@@ -108,16 +108,14 @@ export default function ProductCard({ product, onTryOnOpen }) {
               ))}
             </div>
           )}
-
           {product.description && <p className="pc__desc">{product.description}</p>}
-
           <div className="pc__footer">
             <span className="pc__price">${product.price.toFixed(2)}</span>
             <div className="pc__actions">
               <button className="pc__btn pc__btn--ghost" onClick={handleAddToCart}>
                 {added ? "✓ Added!" : "Add to Cart"}
               </button>
-              <button className="pc__btn pc__btn--solid" onClick={() => setShowForm(true)} disabled={loadingBuy}>
+              <button className="pc__btn pc__btn--solid" onClick={() => setShowForm(true)}>
                 Buy Now
               </button>
             </div>
@@ -125,6 +123,7 @@ export default function ProductCard({ product, onTryOnOpen }) {
         </div>
       </div>
 
+      {/* Buy Now Modal */}
       {showForm && (
         <div className="overlay" onClick={closeForm}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -136,7 +135,7 @@ export default function ProductCard({ product, onTryOnOpen }) {
               <span className="buynow-product-name">{product.name}</span>
               <span className="buynow-product-price">${product.price.toFixed(2)}</span>
             </div>
-            <p className="buynow-subtitle">Enter your details to complete your order</p>
+            <p className="buynow-subtitle">Enter your details and we'll contact you to confirm</p>
             <div className="checkout-form">
               {[
                 { label: "Full Name *",     name: "name",  type: "text",  placeholder: "Jane Doe" },
@@ -162,10 +161,19 @@ export default function ProductCard({ product, onTryOnOpen }) {
                 />
                 {formErrors.address && <span className="field-error">{formErrors.address}</span>}
               </div>
-              <button className="pc__btn pc__btn--solid pc__btn--full" onClick={handleFormSubmit} disabled={loadingBuy}>
-                {loadingBuy ? "Redirecting to payment..." : "Continue to Payment →"}
+              <div style={{ fontSize: "0.75rem", color: "var(--text3)", background: "var(--bg2)", padding: "0.75rem", borderRadius: "4px", lineHeight: 1.6, marginBottom: "0.75rem" }}>
+                💳 <strong>No payment now.</strong> We'll contact you shortly to arrange payment and delivery.
+              </div>
+              <button
+                className="pc__btn pc__btn--solid pc__btn--full"
+                onClick={handleFormSubmit}
+                disabled={loading}
+              >
+                {loading ? "Placing Order..." : "Place Order →"}
               </button>
-              <button className="checkout-cancel" onClick={closeForm} disabled={loadingBuy}>Cancel</button>
+              <button className="checkout-cancel" onClick={closeForm} disabled={loading}>
+                Cancel
+              </button>
             </div>
           </div>
         </div>

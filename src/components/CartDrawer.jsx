@@ -12,11 +12,12 @@ const getImageUrl = (img) => {
 const emptyForm = { name: "", email: "", phone: "", address: "" };
 
 export default function CartDrawer({ isOpen, onClose }) {
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity, cartTotal } = useCart();
-  const [cartLoading, setCartLoading] = useState(false);
-  const [showForm, setShowForm]       = useState(false);
-  const [form, setForm]               = useState(emptyForm);
-  const [formErrors, setFormErrors]   = useState({});
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity, cartTotal, clearCart } = useCart();
+  const [loading, setLoading]       = useState(false);
+  const [showForm, setShowForm]     = useState(false);
+  const [form, setForm]             = useState(emptyForm);
+  const [formErrors, setFormErrors] = useState({});
+  const [success, setSuccess]       = useState(false);
 
   const handleChange = (e) => {
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -31,37 +32,48 @@ export default function CartDrawer({ isOpen, onClose }) {
     return err;
   };
 
-  const handleClose = () => { setShowForm(false); setFormErrors({}); onClose(); };
+  const handleClose = () => {
+    setShowForm(false);
+    setFormErrors({});
+    setSuccess(false);
+    onClose();
+  };
 
   const handleFormSubmit = async () => {
     const errors = validate();
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
-    if (cartLoading) return;
+    if (loading) return;
 
-    setCartLoading(true);
+    setLoading(true);
     try {
       const orderRes = await apiFetch(`${API_BASE}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: cart.map((i) => ({ product: i._id, quantity: i.quantity, price: i.price })),
-          customer: { name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(), address: form.address.trim() },
+          customer: {
+            name:    form.name.trim(),
+            email:   form.email.trim(),
+            phone:   form.phone.trim(),
+            address: form.address.trim(),
+          },
           totalAmount: cartTotal,
+          paymentStatus: "pending",
+          orderStatus: "processing",
         }),
       });
-      const order = await orderRes.json();
 
-      const stripeRes = await apiFetch(`${API_BASE}/api/stripe/checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: order._id }),
-      });
-      const { url } = await stripeRes.json();
-      window.location.href = url;
+      if (!orderRes.ok) throw new Error("Failed to place order");
+
+      clearCart();
+      setSuccess(true);
+      setShowForm(false);
+      setForm(emptyForm);
     } catch (err) {
       console.error(err);
-      alert("Checkout failed. Please try again.");
-      setCartLoading(false);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,14 +81,38 @@ export default function CartDrawer({ isOpen, onClose }) {
     <>
       <div className={`cd-backdrop${isOpen ? " cd-backdrop--on" : ""}`} onClick={handleClose} />
       <aside className={`cd${isOpen ? " cd--open" : ""}`}>
+
+        {/* Header */}
         <div className="cd__header">
           <h2 className="cd__title">
-            {showForm ? "Your Details" : (<>Your Cart {cart.length > 0 && <span className="cd__count">{cart.length}</span>}</>)}
+            {success ? "Order Placed! 🎉" : showForm ? "Your Details" : (
+              <>Your Cart {cart.length > 0 && <span className="cd__count">{cart.length}</span>}</>
+            )}
           </h2>
           <button className="cd__close" onClick={handleClose}>✕</button>
         </div>
 
-        {!showForm && (
+        {/* ── Success view ── */}
+        {success && (
+          <div className="cd__body" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "3rem 2rem", gap: "1rem" }}>
+            <div style={{ fontSize: "3.5rem" }}>👑</div>
+            <h3 style={{ fontFamily: "Playfair Display, serif", fontSize: "1.3rem", color: "var(--brown1)", fontWeight: 500 }}>
+              Your Order Has Been Placed!
+            </h3>
+            <p style={{ fontSize: "0.88rem", color: "var(--text2)", lineHeight: 1.7, maxWidth: "280px" }}>
+              Thank you! We'll contact you shortly to confirm your order and arrange payment and delivery.
+            </p>
+            <p style={{ fontSize: "0.78rem", color: "var(--text3)", lineHeight: 1.6, maxWidth: "280px" }}>
+              Keep an eye on your phone and email — we'll reach out within 24 hours. 💌
+            </p>
+            <button className="cd__checkout-btn" style={{ marginTop: "0.5rem" }} onClick={handleClose}>
+              Continue Shopping
+            </button>
+          </div>
+        )}
+
+        {/* ── Cart view ── */}
+        {!showForm && !success && (
           <>
             <div className="cd__body">
               {cart.length === 0 ? (
@@ -112,19 +148,23 @@ export default function CartDrawer({ isOpen, onClose }) {
                 </ul>
               )}
             </div>
+
             {cart.length > 0 && (
               <div className="cd__footer">
                 <div className="cd__summary-row"><span>Shipping</span><span className="cd__free">Free</span></div>
                 <div className="cd__total-row"><span>Total</span><span className="cd__total-val">${cartTotal.toFixed(2)}</span></div>
-                <button className="cd__checkout-btn" onClick={() => setShowForm(true)}>Checkout →</button>
+                <button className="cd__checkout-btn" onClick={() => setShowForm(true)}>
+                  Checkout →
+                </button>
               </div>
             )}
           </>
         )}
 
-        {showForm && (
+        {/* ── Form view ── */}
+        {showForm && !success && (
           <div className="cd__body cd__body--form">
-            <p className="cd__form-subtitle">Enter your details to complete your order</p>
+            <p className="cd__form-subtitle">Enter your details and we'll contact you to confirm your order</p>
             <div className="cd__form">
               {[
                 { label: "Full Name *",     name: "name",  type: "text",  ph: "Jane Doe" },
@@ -150,11 +190,17 @@ export default function CartDrawer({ isOpen, onClose }) {
                 />
                 {formErrors.address && <span className="cd__err">{formErrors.address}</span>}
               </div>
-              <div className="cd__order-total"><span>Order Total</span><strong>${cartTotal.toFixed(2)}</strong></div>
-              <button className="cd__checkout-btn" onClick={handleFormSubmit} disabled={cartLoading}>
-                {cartLoading ? "Redirecting to payment..." : "Continue to Payment →"}
+              <div className="cd__order-total">
+                <span>Order Total</span>
+                <strong>${cartTotal.toFixed(2)}</strong>
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "var(--text3)", background: "var(--bg2)", padding: "0.75rem", borderRadius: "4px", lineHeight: 1.6, marginBottom: "0.5rem" }}>
+                💳 <strong>No payment now.</strong> We'll contact you shortly to arrange payment and delivery.
+              </div>
+              <button className="cd__checkout-btn" onClick={handleFormSubmit} disabled={loading}>
+                {loading ? "Placing Order..." : "Place Order →"}
               </button>
-              <button className="cd__back-btn" onClick={() => { setShowForm(false); setFormErrors({}); }} disabled={cartLoading}>
+              <button className="cd__back-btn" onClick={() => { setShowForm(false); setFormErrors({}); }} disabled={loading}>
                 ← Back to Cart
               </button>
             </div>
