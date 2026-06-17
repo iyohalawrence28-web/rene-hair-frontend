@@ -14,7 +14,7 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
           {/* Brand / Logo */}
           <a href="/" className="nav__brand">
             <img
-              src="/logo.png"
+              src="/logo.svg"
               alt="Ms.Fabulux Hairs"
               className="nav__logo-img"
             />
@@ -41,7 +41,6 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
               {cartCount > 0 && <span className="nav__badge">{cartCount}</span>}
             </button>
 
-            {/* Hamburger */}
             <button
               className={`nav__burger${menuOpen ? " nav__burger--open" : ""}`}
               onClick={() => setMenuOpen((v) => !v)}
@@ -53,7 +52,6 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
         </div>
       </nav>
 
-      {/* Mobile drawer */}
       {menuOpen && (
         <div className="nav__mobile">
           <a href="/"       className="nav__mobile-link" onClick={() => setMenuOpen(false)}>Home</a>

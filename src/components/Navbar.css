@@ -4,7 +4,7 @@
 
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 900;
-  height: 70px;
+  height: 72px;
   background: rgba(255,255,255,0.97);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
@@ -26,13 +26,10 @@
 }
 
 .nav__logo-img {
-  height: 52px;
+  height: 56px;
   width: auto;
   object-fit: contain;
-  /* logo has black bg — add white bg pill behind it */
-  background: #111;
-  border-radius: 8px;
-  padding: 4px 10px;
+  background: transparent;
 }
 
 /* Desktop links */
@@ -90,7 +87,7 @@
 
 /* Mobile nav */
 .nav__mobile {
-  position: fixed; top: 70px; left: 0; right: 0; z-index: 800;
+  position: fixed; top: 72px; left: 0; right: 0; z-index: 800;
   background: var(--white);
   border-bottom: 1px solid var(--border);
   display: flex; flex-direction: column;
@@ -108,7 +105,7 @@
   text-decoration: none;
   border-bottom: 1px solid var(--border);
   transition: color .2s;
-  background: none; border-bottom: 1px solid var(--border);
+  background: none;
   cursor: pointer; font-family: var(--font-sans);
   text-align: left;
 }
@@ -130,8 +127,9 @@
   .nav__cart-btn { padding: 9px 14px; font-size: 0; gap: 0; }
   .nav__cart-btn svg { width: 20px; height: 20px; }
   .nav__badge { font-size: 9px; margin-left: 2px; }
-  .nav__logo-img { height: 44px; }
+  .nav__logo-img { height: 46px; }
 }
 @media (max-width: 400px) {
   .nav__inner { padding: 0 16px; }
 }
+
