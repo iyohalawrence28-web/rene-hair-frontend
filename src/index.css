@@ -1,39 +1,67 @@
 /* ═══════════════════════════════════════════
-   René Hair — Global Design System
-   Brown & Cream warm palette
+   Ms.Fabulux Hairs — Global Design System
+   White · Black · Hot Pink · Rose Gold
 ═══════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 :root {
-  --bg:        #fffdf9;
-  --bg2:       #fdf6ee;
-  --bg3:       #f9ede0;
+  /* ── Backgrounds ── */
+  --bg:        #ffffff;
+  --bg2:       #fafafa;
+  --bg3:       #f5f5f5;
   --surface:   #ffffff;
-  --border:    #f0e0ce;
-  --border2:   #e2cab4;
-  --brown1:    #2c1a0e;   /* darkest — headings       */
-  --brown2:    #5c3317;   /* primary buttons          */
-  --brown3:    #8b5e3c;   /* mid accent               */
-  --brown4:    #c4956a;   /* light accent             */
-  --brown5:    #e8ccb0;   /* pale tint                */
-  --brown6:    #f5e8d8;   /* very pale fill           */
-  --text:      #2c1a0e;
-  --text2:     #7a5540;
-  --text3:     #b08060;
+
+  /* ── Borders ── */
+  --border:    #eeeeee;
+  --border2:   #dddddd;
+
+  /* ── Brand colours ── */
+  --pink:      #E8006C;   /* hot pink — primary CTA   */
+  --pink2:     #c5005a;   /* darker pink — hover      */
+  --pink3:     #ff3d8a;   /* lighter pink — accents   */
+  --pink-pale: #fce4f0;   /* very pale pink fill      */
+  --pink-dim:  #f9c6df;   /* pale pink border/tint    */
+
+  --gold:      #C9956A;   /* rose gold — accents      */
+  --gold2:     #b07d52;   /* darker gold — hover      */
+  --gold3:     #e8c49a;   /* lighter gold             */
+  --gold-pale: #fdf3ea;   /* very pale gold fill      */
+
+  --black:     #111111;   /* near black — headings    */
+  --black2:    #222222;
+  --black3:    #333333;
+
+  /* ── Text ── */
+  --text:      #111111;
+  --text2:     #555555;
+  --text3:     #999999;
   --white:     #ffffff;
-  --green:     #4a7c5f;
-  --red:       #b94040;
 
-  --radius-sm:  8px;
-  --radius-md:  12px;
-  --radius-lg:  18px;
-  --radius-xl:  24px;
+  /* ── Semantic ── */
+  --green:     #2d7a4f;
+  --red:       #c0392b;
 
-  --shadow-sm:  0 2px 8px rgba(44,26,14,.05);
-  --shadow-md:  0 4px 18px rgba(44,26,14,.08);
-  --shadow-lg:  0 10px 32px rgba(44,26,14,.12);
+  /* ── Aliases for backward compatibility with existing components ── */
+  --brown1:    #111111;
+  --brown2:    #E8006C;
+  --brown3:    #C9956A;
+  --brown4:    #e8c49a;
+  --brown5:    #f9c6df;
+  --brown6:    #fce4f0;
 
+  /* ── Radii ── */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --radius-xl:  22px;
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 2px 8px rgba(0,0,0,.05);
+  --shadow-md:  0 4px 18px rgba(0,0,0,.08);
+  --shadow-lg:  0 10px 32px rgba(0,0,0,.12);
+
+  /* ── Fonts ── */
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans:  'DM Sans', system-ui, sans-serif;
 }
@@ -55,7 +83,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Remove Vite default centering */
 #root {
   max-width: 100%;
   margin: 0;
@@ -70,8 +97,8 @@ body {
 /* ── Scrollbar ── */
 ::-webkit-scrollbar        { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track  { background: var(--bg2); }
-::-webkit-scrollbar-thumb  { background: var(--brown5); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--brown4); }
+::-webkit-scrollbar-thumb  { background: var(--pink-dim); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--pink); }
 
 /* ── Shared button base ── */
 .btn {
@@ -84,30 +111,30 @@ body {
 .btn:disabled { opacity: .55; cursor: not-allowed; }
 
 .btn-solid {
-  background: var(--brown2); color: var(--white);
+  background: var(--pink); color: var(--white);
   padding: 13px 26px; font-size: 14px;
 }
 .btn-solid:hover:not(:disabled) {
-  background: var(--brown1);
+  background: var(--pink2);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(92,51,23,.22);
+  box-shadow: 0 6px 18px rgba(232,0,108,.25);
 }
 
 .btn-outline {
-  background: transparent; color: var(--brown2);
-  border: 1.5px solid var(--brown2);
+  background: transparent; color: var(--pink);
+  border: 1.5px solid var(--pink);
   padding: 12px 24px; font-size: 14px;
 }
 .btn-outline:hover:not(:disabled) {
-  background: var(--brown2); color: var(--white);
+  background: var(--pink); color: var(--white);
 }
 
 .btn-ghost {
-  background: var(--brown6); color: var(--brown1);
+  background: var(--pink-pale); color: var(--black);
   padding: 10px 18px; font-size: 13px;
 }
 .btn-ghost:hover:not(:disabled) {
-  background: var(--brown2); color: var(--white);
+  background: var(--pink); color: var(--white);
 }
 
 .btn-sm {
@@ -126,7 +153,7 @@ body {
 .card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--brown5);
+  border-color: var(--pink-dim);
 }
 
 /* ── Form inputs ── */
@@ -139,7 +166,7 @@ body {
   font-family: var(--font-sans);
   outline: none; transition: border-color .15s;
 }
-.input:focus { border-color: var(--brown2); }
+.input:focus { border-color: var(--pink); }
 .input.error { border-color: var(--red); }
 
 /* ── Badge ── */
@@ -149,21 +176,22 @@ body {
   text-transform: uppercase; letter-spacing: .05em;
   padding: 3px 9px; border-radius: 5px;
 }
-.badge-brown { background: var(--brown2); color: var(--white); }
-.badge-red   { background: var(--red);    color: var(--white); }
-.badge-green { background: var(--green);  color: var(--white); }
+.badge-pink  { background: var(--pink);  color: var(--white); }
+.badge-brown { background: var(--pink);  color: var(--white); }
+.badge-red   { background: var(--red);   color: var(--white); }
+.badge-green { background: var(--green); color: var(--white); }
 
 /* ── Status chips ── */
 .status { display:inline-block; font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; text-transform:uppercase; letter-spacing:.04em; }
-.status-processing { background:rgba(180,140,80,.12); color:#8b6020; }
+.status-processing { background:rgba(201,149,106,.12); color:var(--gold2); }
 .status-shipped    { background:rgba(52,130,219,.12);  color:#1a60a8; }
-.status-delivered  { background:rgba(74,124,95,.14);   color:#2d6648; }
-.status-paid       { background:rgba(74,124,95,.14);   color:#2d6648; }
-.status-pending    { background:rgba(180,100,60,.12);  color:var(--brown2); }
+.status-delivered  { background:rgba(45,122,79,.14);   color:var(--green); }
+.status-paid       { background:rgba(45,122,79,.14);   color:var(--green); }
+.status-pending    { background:rgba(232,0,108,.10);   color:var(--pink); }
 
-/* ── Page hero strip (shared across pages) ── */
+/* ── Page hero strip ── */
 .page-hero {
-  background: linear-gradient(150deg, #fef8f0, #fdf1e3);
+  background: linear-gradient(150deg, var(--pink-pale), #fff0f6);
   padding: 40px 28px 26px;
   border-bottom: 1px solid var(--border);
 }
@@ -171,12 +199,12 @@ body {
 .page-heading {
   font-family: var(--font-serif);
   font-size: clamp(24px, 4vw, 38px);
-  font-weight: 600; color: var(--brown1); margin-bottom: 4px;
+  font-weight: 600; color: var(--black); margin-bottom: 4px;
 }
-.page-heading em { font-style: italic; color: var(--brown3); }
+.page-heading em { font-style: italic; color: var(--pink); }
 .page-subheading { font-size: 13px; color: var(--text3); }
 
-/* ── Toast (global) ── */
+/* ── Toast ── */
 .toast-container {
   position: fixed; bottom: 22px; left: 50%;
   transform: translateX(-50%);
@@ -186,7 +214,7 @@ body {
 /* ── Overlay backdrop ── */
 .overlay {
   position: fixed; inset: 0;
-  background: rgba(44, 26, 14, .45);
+  background: rgba(0, 0, 0, .5);
   backdrop-filter: blur(4px);
   z-index: 800;
   display: flex; align-items: center; justify-content: center;
@@ -201,7 +229,7 @@ body {
   border-radius: var(--radius-xl);
   width: 100%; max-width: 480px;
   max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(44,26,14,.25);
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
   animation: slideUp .25s ease;
   scrollbar-width: none;
 }
@@ -214,7 +242,7 @@ body {
 }
 .modal-title {
   font-family: var(--font-serif);
-  font-size: 22px; font-weight: 600; color: var(--brown1);
+  font-size: 22px; font-weight: 600; color: var(--black);
 }
 .modal-close {
   width: 32px; height: 32px; border-radius: 50%;
@@ -223,14 +251,49 @@ body {
   display: flex; align-items: center; justify-content: center;
   transition: all .2s;
 }
-.modal-close:hover { background: var(--brown2); color: var(--white); border-color: var(--brown2); }
+.modal-close:hover { background: var(--pink); color: var(--white); border-color: var(--pink); }
 
 /* ── Spinner ── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner {
   width: 40px; height: 40px;
-  border: 3px solid var(--brown5);
-  border-top-color: var(--brown2);
+  border: 3px solid var(--pink-pale);
+  border-top-color: var(--pink);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+
+/* ── Checkout form shared styles ── */
+.buynow-summary {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 22px;
+  background: var(--pink-pale);
+  border-bottom: 1px solid var(--pink-dim);
+}
+.buynow-product-name { font-weight: 500; font-size: 14px; color: var(--black); }
+.buynow-product-price { font-weight: 700; font-size: 16px; color: var(--pink); }
+.buynow-subtitle { font-size: 12px; color: var(--text3); padding: 8px 22px 0; }
+
+.checkout-form { padding: 16px 22px 22px; display: flex; flex-direction: column; gap: 10px; }
+.checkout-field { display: flex; flex-direction: column; gap: 4px; }
+.checkout-label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; }
+.checkout-input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text);
+  font-family: var(--font-sans);
+  background: var(--bg2);
+  outline: none; transition: border-color .15s;
+}
+.checkout-input:focus { border-color: var(--pink); }
+.checkout-input--err { border-color: var(--red); }
+.checkout-textarea { resize: vertical; min-height: 72px; }
+.field-error { font-size: 11px; color: var(--red); }
+.checkout-cancel {
+  background: none; border: none; color: var(--text3);
+  font-size: 12px; cursor: pointer; text-align: center;
+  padding: 4px; font-family: var(--font-sans);
+}
+.checkout-cancel:hover { color: var(--pink); }
+
