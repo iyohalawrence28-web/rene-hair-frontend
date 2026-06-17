@@ -11,8 +11,14 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
       <nav className="nav">
         <div className="nav__inner">
 
-          {/* Brand */}
-          <a href="/" className="nav__brand">René<em> Hair</em></a>
+          {/* Brand / Logo */}
+          <a href="/" className="nav__brand">
+            <img
+              src="/logo.png"
+              alt="Ms.Fabulux Hairs"
+              className="nav__logo-img"
+            />
+          </a>
 
           {/* Desktop links */}
           <div className="nav__links">
@@ -61,3 +67,4 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
     </>
   );
 }
+
