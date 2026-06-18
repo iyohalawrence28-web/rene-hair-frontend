@@ -133,3 +133,26 @@
   .nav__inner { padding: 0 16px; }
 }
 
+/* Language toggle */
+.nav__lang-btn {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav__lang-btn:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+  background: var(--pink-pale);
+}
+
+
+
+

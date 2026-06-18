@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { useLanguage } from "../context/LanguageContext";
 import "./Navbar.css";
 
 export default function Navbar({ onCartOpen, onTryOnOpen }) {
   const { cartCount } = useCart();
+  const { lang, setLang, t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -13,22 +15,28 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
 
           {/* Brand / Logo */}
           <a href="/" className="nav__brand">
-            <img
-              src="/logo.svg"
-              alt="Ms.Fabulux Hairs"
-              className="nav__logo-img"
-            />
+            <img src="/logo.svg" alt="Ms.Fabulux Hairs" className="nav__logo-img" />
           </a>
 
           {/* Desktop links */}
           <div className="nav__links">
-            <a href="/" className="nav__link">Home</a>
-            <a href="/#shop" className="nav__link">Shop</a>
-            <button className="nav__link" onClick={() => onTryOnOpen()}>✨ AI Try-On</button>
+            <a href="/" className="nav__link">{t("home")}</a>
+            <a href="/#shop" className="nav__link">{t("shop")}</a>
+            <button className="nav__link" onClick={() => onTryOnOpen()}>{t("aiTryOn")}</button>
           </div>
 
           {/* Right side */}
           <div className="nav__right">
+
+            {/* Language toggle */}
+            <button
+              className="nav__lang-btn"
+              onClick={() => setLang(lang === "en" ? "bg" : "en")}
+              title={lang === "en" ? "Switch to Bulgarian" : "Switch to English"}
+            >
+              {lang === "en" ? "🇧🇬 BG" : "🇬🇧 EN"}
+            </button>
+
             <button className="nav__cart-btn" onClick={onCartOpen} aria-label="Open cart">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="1.8"
@@ -37,7 +45,7 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
                 <line x1="3" y1="6" x2="21" y2="6"/>
                 <path d="M16 10a4 4 0 01-8 0"/>
               </svg>
-              Cart
+              {t("cart")}
               {cartCount > 0 && <span className="nav__badge">{cartCount}</span>}
             </button>
 
@@ -54,11 +62,17 @@ export default function Navbar({ onCartOpen, onTryOnOpen }) {
 
       {menuOpen && (
         <div className="nav__mobile">
-          <a href="/"       className="nav__mobile-link" onClick={() => setMenuOpen(false)}>Home</a>
-          <a href="/#shop"  className="nav__mobile-link" onClick={() => setMenuOpen(false)}>Shop</a>
-          <button className="nav__mobile-link" onClick={() => { setMenuOpen(false); onTryOnOpen(); }}>✨ AI Try-On</button>
+          <a href="/" className="nav__mobile-link" onClick={() => setMenuOpen(false)}>{t("home")}</a>
+          <a href="/#shop" className="nav__mobile-link" onClick={() => setMenuOpen(false)}>{t("shop")}</a>
+          <button className="nav__mobile-link" onClick={() => { setMenuOpen(false); onTryOnOpen(); }}>{t("aiTryOn")}</button>
+          <button
+            className="nav__mobile-link"
+            onClick={() => setLang(lang === "en" ? "bg" : "en")}
+          >
+            {lang === "en" ? "🇧🇬 Превключи на Български" : "🇬🇧 Switch to English"}
+          </button>
           <button className="nav__mobile-cart" onClick={() => { setMenuOpen(false); onCartOpen(); }}>
-            🛒 Cart {cartCount > 0 && `(${cartCount})`}
+            🛒 {t("cart")} {cartCount > 0 && `(${cartCount})`}
           </button>
         </div>
       )}
