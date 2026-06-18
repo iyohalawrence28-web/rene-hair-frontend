@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="footer__grid">
           {/* Brand col */}
           <div className="footer__brand-col">
-            <div className="footer__logo">René <em>Hair</em></div>
+            <div className="footer__logo">Ms <em>Fabulux</em></div>
             <p className="footer__desc">
               Premium lace wigs for the modern woman.
               Quality you can feel, style you can see.
@@ -42,7 +42,7 @@ export default function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <span>© {new Date().getFullYear()} René Hair. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} ms Fabulux. All rights reserved.</span>
           <span>Made with ♥ for queens</span>
         </div>
 
