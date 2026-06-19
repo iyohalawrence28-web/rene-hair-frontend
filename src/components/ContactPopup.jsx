@@ -13,19 +13,9 @@ export default function ContactPopup() {
 
   useEffect(() => {
     if (dismissed) return;
-
-    const handleScroll = () => {
-      const shop = document.getElementById("shop");
-      if (!shop) return;
-      const shopBottom = shop.getBoundingClientRect().bottom;
-      if (shopBottom < 0 && !visible) {
-        setVisible(true);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [visible, dismissed]);
+    const timer = setTimeout(() => setVisible(true), 8000);
+    return () => clearTimeout(timer);
+}, [dismissed]);
 
   const handleDismiss = () => {
     setVisible(false);
