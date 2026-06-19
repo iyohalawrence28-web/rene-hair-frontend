@@ -155,7 +155,7 @@
 }
 
 /* ── Share ── */
-.tm__share { }
+
 .tm__share-label {
   font-size: 11px; font-weight: 600; color: var(--text3);
   text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
@@ -352,3 +352,30 @@
   .tm__body { padding: 16px 18px 24px; }
   .tm__header { padding: 18px 18px 14px; }
 }
+/* ── Native Share Button ── */
+.tm__native-share-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #E8006C, #C9956A);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 12px;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s;
+}
+.tm__native-share-btn:hover { opacity: 0.9; }
+
+/* ── TikTok button ── */
+.tm__tiktok {
+  background: #010101 !important;
+  color: #fff !important;
+}
+.tm__tiktok:hover { background: #333 !important; }
