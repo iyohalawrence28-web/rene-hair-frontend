@@ -4,15 +4,15 @@ import Navbar from "../components/Navbar";
 import CartDrawer from "../components/CartDrawer";
 import TryOnModal from "../components/TryOnModal";
 import Footer from "../components/Footer";
+import ContactPopup from "../components/ContactPopup";
+import ChatWidget from "../components/ChatWidget";
 import "./MainLayout.css";
 
 export default function MainLayout() {
-  const [cartOpen, setCartOpen]     = useState(false);
-  const [tryOnOpen, setTryOnOpen]   = useState(false);
+  const [cartOpen, setCartOpen]         = useState(false);
+  const [tryOnOpen, setTryOnOpen]       = useState(false);
   const [tryOnProduct, setTryOnProduct] = useState(null);
 
-  // Call with a product to open for that specific wig,
-  // or with null/no args to open generically (from hero/banner)
   const openTryOn = (product = null) => {
     setTryOnProduct(product);
     setTryOnOpen(true);
@@ -39,7 +39,14 @@ export default function MainLayout() {
         <Outlet context={{ onTryOnOpen: openTryOn }} />
       </main>
       <Footer />
+
+      {/* ── Scroll popup — appears after browsing products ── */}
+      <ContactPopup />
+
+      {/* ── Floating WhatsApp chat widget ── */}
+      <ChatWidget />
     </div>
   );
 }
+
 
