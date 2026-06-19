@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { useLanguage } from "../context/LanguageContext";
 import "./CartDrawer.css";
-
 import { API_BASE, apiFetch } from "../config";
 
 const getImageUrl = (img) => {
@@ -13,6 +13,7 @@ const emptyForm = { name: "", email: "", phone: "", address: "" };
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, cartTotal, clearCart } = useCart();
+  const { t } = useLanguage();
   const [loading, setLoading]       = useState(false);
   const [showForm, setShowForm]     = useState(false);
   const [form, setForm]             = useState(emptyForm);
@@ -26,24 +27,18 @@ export default function CartDrawer({ isOpen, onClose }) {
 
   const validate = () => {
     const err = {};
-    if (!form.name.trim())                               err.name    = "Name is required";
-    if (!form.email.trim() || !form.email.includes("@")) err.email   = "Valid email is required";
-    if (!form.address.trim())                            err.address = "Address is required";
+    if (!form.name.trim())                               err.name    = "Required";
+    if (!form.email.trim() || !form.email.includes("@")) err.email   = "Valid email required";
+    if (!form.address.trim())                            err.address = "Required";
     return err;
   };
 
-  const handleClose = () => {
-    setShowForm(false);
-    setFormErrors({});
-    setSuccess(false);
-    onClose();
-  };
+  const handleClose = () => { setShowForm(false); setFormErrors({}); setSuccess(false); onClose(); };
 
   const handleFormSubmit = async () => {
     const errors = validate();
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
     if (loading) return;
-
     setLoading(true);
     try {
       const orderRes = await apiFetch(`${API_BASE}/api/orders`, {
@@ -51,20 +46,13 @@ export default function CartDrawer({ isOpen, onClose }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: cart.map((i) => ({ product: i._id, quantity: i.quantity, price: i.price })),
-          customer: {
-            name:    form.name.trim(),
-            email:   form.email.trim(),
-            phone:   form.phone.trim(),
-            address: form.address.trim(),
-          },
+          customer: { name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(), address: form.address.trim() },
           totalAmount: cartTotal,
           paymentStatus: "pending",
           orderStatus: "processing",
         }),
       });
-
       if (!orderRes.ok) throw new Error("Failed to place order");
-
       clearCart();
       setSuccess(true);
       setShowForm(false);
@@ -81,54 +69,45 @@ export default function CartDrawer({ isOpen, onClose }) {
     <>
       <div className={`cd-backdrop${isOpen ? " cd-backdrop--on" : ""}`} onClick={handleClose} />
       <aside className={`cd${isOpen ? " cd--open" : ""}`}>
-
-        {/* Header */}
         <div className="cd__header">
           <h2 className="cd__title">
-            {success ? "Order Placed! 🎉" : showForm ? "Your Details" : (
-              <>Your Cart {cart.length > 0 && <span className="cd__count">{cart.length}</span>}</>
+            {success ? `${t("orderPlaced").split("!")[0]}! 🎉` : showForm ? t("yourDetails") : (
+              <>{t("yourCart")} {cart.length > 0 && <span className="cd__count">{cart.length}</span>}</>
             )}
           </h2>
           <button className="cd__close" onClick={handleClose}>✕</button>
         </div>
 
-        {/* ── Success view ── */}
         {success && (
-          <div className="cd__body" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "3rem 2rem", gap: "1rem" }}>
-            <div style={{ fontSize: "3.5rem" }}>👑</div>
-            <h3 style={{ fontFamily: "Playfair Display, serif", fontSize: "1.3rem", color: "var(--brown1)", fontWeight: 500 }}>
-              Your Order Has Been Placed!
+          <div className="cd__body" style={{ display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center", padding:"3rem 2rem", gap:"1rem" }}>
+            <div style={{ fontSize:"3.5rem" }}>👑</div>
+            <h3 style={{ fontFamily:"Playfair Display,serif", fontSize:"1.3rem", color:"var(--brown1)", fontWeight:500 }}>
+              {t("orderPlaced")}
             </h3>
-            <p style={{ fontSize: "0.88rem", color: "var(--text2)", lineHeight: 1.7, maxWidth: "280px" }}>
-              Thank you! We'll contact you shortly to confirm your order and arrange payment and delivery.
+            <p style={{ fontSize:"0.88rem", color:"var(--text2)", lineHeight:1.7, maxWidth:"280px" }}>
+              {t("orderThankYou")}
             </p>
-            <p style={{ fontSize: "0.78rem", color: "var(--text3)", lineHeight: 1.6, maxWidth: "280px" }}>
-              Keep an eye on your phone and email — we'll reach out within 24 hours. 💌
-            </p>
-            <button className="cd__checkout-btn" style={{ marginTop: "0.5rem" }} onClick={handleClose}>
-              Continue Shopping
+            <button className="cd__checkout-btn" style={{ marginTop:"0.5rem" }} onClick={handleClose}>
+              {t("continueShopping")}
             </button>
           </div>
         )}
 
-        {/* ── Cart view ── */}
         {!showForm && !success && (
           <>
             <div className="cd__body">
               {cart.length === 0 ? (
                 <div className="cd__empty">
                   <div className="cd__empty-icon">🛍️</div>
-                  <p className="cd__empty-text">Your cart is empty</p>
-                  <button className="cd__continue-btn" onClick={handleClose}>Continue Shopping</button>
+                  <p className="cd__empty-text">{t("cartEmpty")}</p>
+                  <button className="cd__continue-btn" onClick={handleClose}>{t("continueShopping")}</button>
                 </div>
               ) : (
                 <ul className="cd__items">
                   {cart.map((item) => (
                     <li key={item._id} className="cd__item">
                       <div className="cd__item-img">
-                        {item.images?.[0]
-                          ? <img src={getImageUrl(item.images[0])} alt={item.name} />
-                          : <span>💇🏾‍♀️</span>}
+                        {item.images?.[0] ? <img src={getImageUrl(item.images[0])} alt={item.name} /> : <span>💇🏾‍♀️</span>}
                       </div>
                       <div className="cd__item-info">
                         <p className="cd__item-name">{item.name}</p>
@@ -148,28 +127,24 @@ export default function CartDrawer({ isOpen, onClose }) {
                 </ul>
               )}
             </div>
-
             {cart.length > 0 && (
               <div className="cd__footer">
-                <div className="cd__summary-row"><span>Shipping</span><span className="cd__free">Free</span></div>
-                <div className="cd__total-row"><span>Total</span><span className="cd__total-val">${cartTotal.toFixed(2)}</span></div>
-                <button className="cd__checkout-btn" onClick={() => setShowForm(true)}>
-                  Checkout →
-                </button>
+                <div className="cd__summary-row"><span>{t("shipping")}</span><span className="cd__free">{t("free")}</span></div>
+                <div className="cd__total-row"><span>{t("total")}</span><span className="cd__total-val">${cartTotal.toFixed(2)}</span></div>
+                <button className="cd__checkout-btn" onClick={() => setShowForm(true)}>{t("checkout")}</button>
               </div>
             )}
           </>
         )}
 
-        {/* ── Form view ── */}
         {showForm && !success && (
           <div className="cd__body cd__body--form">
-            <p className="cd__form-subtitle">Enter your details and we'll contact you to confirm your order</p>
+            <p className="cd__form-subtitle">{t("enterDetails")}</p>
             <div className="cd__form">
               {[
-                { label: "Full Name *",     name: "name",  type: "text",  ph: "Jane Doe" },
-                { label: "Email Address *", name: "email", type: "email", ph: "jane@example.com" },
-                { label: "Phone Number",    name: "phone", type: "tel",   ph: "+234 800 000 0000" },
+                { label: t("fullName"),     name: "name",  type: "text",  ph: "Jane Doe" },
+                { label: t("emailAddress"), name: "email", type: "email", ph: "jane@example.com" },
+                { label: t("phoneNumber"),  name: "phone", type: "tel",   ph: "+234 800 000 0000" },
               ].map(({ label, name, type, ph }) => (
                 <div className="cd__field" key={name}>
                   <label className="cd__label">{label}</label>
@@ -182,7 +157,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                 </div>
               ))}
               <div className="cd__field">
-                <label className="cd__label">Delivery Address *</label>
+                <label className="cd__label">{t("deliveryAddress")}</label>
                 <textarea
                   className={`cd__input cd__textarea${formErrors.address ? " cd__input--err" : ""}`}
                   name="address" placeholder="Street, City, State, Country"
@@ -190,18 +165,15 @@ export default function CartDrawer({ isOpen, onClose }) {
                 />
                 {formErrors.address && <span className="cd__err">{formErrors.address}</span>}
               </div>
-              <div className="cd__order-total">
-                <span>Order Total</span>
-                <strong>${cartTotal.toFixed(2)}</strong>
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--text3)", background: "var(--bg2)", padding: "0.75rem", borderRadius: "4px", lineHeight: 1.6, marginBottom: "0.5rem" }}>
-                💳 <strong>No payment now.</strong> We'll contact you shortly to arrange payment and delivery.
+              <div className="cd__order-total"><span>{t("orderTotal")}</span><strong>${cartTotal.toFixed(2)}</strong></div>
+              <div style={{ fontSize:"0.75rem", color:"var(--text3)", background:"var(--bg2)", padding:"0.75rem", borderRadius:"4px", lineHeight:1.6, marginBottom:"0.5rem" }}>
+                💳 {t("noPaymentNow")}
               </div>
               <button className="cd__checkout-btn" onClick={handleFormSubmit} disabled={loading}>
-                {loading ? "Placing Order..." : "Place Order →"}
+                {loading ? t("placingOrder") : t("placeOrder")}
               </button>
               <button className="cd__back-btn" onClick={() => { setShowForm(false); setFormErrors({}); }} disabled={loading}>
-                ← Back to Cart
+                {t("backToCart")}
               </button>
             </div>
           </div>
@@ -210,5 +182,8 @@ export default function CartDrawer({ isOpen, onClose }) {
     </>
   );
 }
+
+
+
 
 

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { useLanguage } from "../context/LanguageContext";
 import TryOnModal from "./TryOnModal";
 import "./ProductCard.css";
 import { useNavigate } from "react-router-dom";
-
 import { API_BASE, apiFetch } from "../config";
+
 const emptyForm = { name: "", email: "", phone: "", address: "" };
 
 const getImageUrl = (img) => {
@@ -14,6 +15,7 @@ const getImageUrl = (img) => {
 
 export default function ProductCard({ product, onTryOnOpen }) {
   const { addToCart } = useCart();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [loading, setLoading]       = useState(false);
@@ -38,9 +40,9 @@ export default function ProductCard({ product, onTryOnOpen }) {
 
   const validate = () => {
     const err = {};
-    if (!form.name.trim())                               err.name    = "Name is required";
-    if (!form.email.trim() || !form.email.includes("@")) err.email   = "Valid email is required";
-    if (!form.address.trim())                            err.address = "Address is required";
+    if (!form.name.trim())                               err.name    = t("fullName").replace(" *","") + " is required";
+    if (!form.email.trim() || !form.email.includes("@")) err.email   = t("emailAddress").replace(" *","") + " is required";
+    if (!form.address.trim())                            err.address = t("deliveryAddress").replace(" *","") + " is required";
     return err;
   };
 
@@ -71,7 +73,6 @@ export default function ProductCard({ product, onTryOnOpen }) {
 
       if (!orderRes.ok) throw new Error("Failed to place order");
       const order = await orderRes.json();
-
       closeForm();
       navigate(`/success?orderId=${order._id}`);
     } catch (err) {
@@ -91,11 +92,8 @@ export default function ProductCard({ product, onTryOnOpen }) {
             <div className="pc__img-placeholder"><span>💇🏾‍♀️</span></div>
           )}
           <button className="pc__tryon-pill" onClick={() => onTryOnOpen && onTryOnOpen(product)}>
-            ✨ Try On
+            {t("tryOn")}
           </button>
-          {product.stock > 0 && product.stock <= 5 && (
-            <span className="pc__stock-badge">Only {product.stock} left</span>
-          )}
         </div>
 
         <div className="pc__body">
@@ -113,34 +111,33 @@ export default function ProductCard({ product, onTryOnOpen }) {
             <span className="pc__price">${product.price.toFixed(2)}</span>
             <div className="pc__actions">
               <button className="pc__btn pc__btn--ghost" onClick={handleAddToCart}>
-                {added ? "✓ Added!" : "Add to Cart"}
+                {added ? t("added") : t("addToCart")}
               </button>
               <button className="pc__btn pc__btn--solid" onClick={() => setShowForm(true)}>
-                Buy Now
+                {t("buyNow")}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Buy Now Modal */}
       {showForm && (
         <div className="overlay" onClick={closeForm}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2 className="modal-title">Your Details</h2>
+              <h2 className="modal-title">{t("yourDetails")}</h2>
               <button className="modal-close" onClick={closeForm}>✕</button>
             </div>
             <div className="buynow-summary">
               <span className="buynow-product-name">{product.name}</span>
               <span className="buynow-product-price">${product.price.toFixed(2)}</span>
             </div>
-            <p className="buynow-subtitle">Enter your details and we'll contact you to confirm</p>
+            <p className="buynow-subtitle">{t("enterDetails")}</p>
             <div className="checkout-form">
               {[
-                { label: "Full Name *",     name: "name",  type: "text",  placeholder: "Jane Doe" },
-                { label: "Email Address *", name: "email", type: "email", placeholder: "jane@example.com" },
-                { label: "Phone Number",    name: "phone", type: "tel",   placeholder: "+234 800 000 0000" },
+                { label: t("fullName"),     name: "name",  type: "text",  placeholder: "Jane Doe" },
+                { label: t("emailAddress"), name: "email", type: "email", placeholder: "jane@example.com" },
+                { label: t("phoneNumber"),  name: "phone", type: "tel",   placeholder: "+234 800 000 0000" },
               ].map(({ label, name, type, placeholder }) => (
                 <div className="checkout-field" key={name}>
                   <label className="checkout-label">{label}</label>
@@ -153,7 +150,7 @@ export default function ProductCard({ product, onTryOnOpen }) {
                 </div>
               ))}
               <div className="checkout-field">
-                <label className="checkout-label">Delivery Address *</label>
+                <label className="checkout-label">{t("deliveryAddress")}</label>
                 <textarea
                   className={`checkout-input checkout-textarea${formErrors.address ? " checkout-input--err" : ""}`}
                   name="address" placeholder="Street, City, State, Country"
@@ -162,18 +159,12 @@ export default function ProductCard({ product, onTryOnOpen }) {
                 {formErrors.address && <span className="field-error">{formErrors.address}</span>}
               </div>
               <div style={{ fontSize: "0.75rem", color: "var(--text3)", background: "var(--bg2)", padding: "0.75rem", borderRadius: "4px", lineHeight: 1.6, marginBottom: "0.75rem" }}>
-                💳 <strong>No payment now.</strong> We'll contact you shortly to arrange payment and delivery.
+                💳 {t("noPaymentNow")}
               </div>
-              <button
-                className="pc__btn pc__btn--solid pc__btn--full"
-                onClick={handleFormSubmit}
-                disabled={loading}
-              >
-                {loading ? "Placing Order..." : "Place Order →"}
+              <button className="pc__btn pc__btn--solid pc__btn--full" onClick={handleFormSubmit} disabled={loading}>
+                {loading ? t("placingOrder") : t("placeOrder")}
               </button>
-              <button className="checkout-cancel" onClick={closeForm} disabled={loading}>
-                Cancel
-              </button>
+              <button className="checkout-cancel" onClick={closeForm} disabled={loading}>Cancel</button>
             </div>
           </div>
         </div>

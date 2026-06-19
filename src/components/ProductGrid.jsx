@@ -1,21 +1,21 @@
 import ProductCard from "./ProductCard";
 import "./ProductGrid.css";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ProductGrid({ products, loading, onTryOnOpen }) {
+  const { t } = useLanguage();
 
   return (
     <div id="shop">
-      {/* ── Section Header ── */}
       <div className="pg-section">
         <div className="pg-section__inner">
           <div className="pg-section__head">
-            <h2 className="pg-section__title">Our <em>Collection</em></h2>
+            <h2 className="pg-section__title">{t("ourCollection").split(" ")[0]} <em>{t("ourCollection").split(" ").slice(1).join(" ")}</em></h2>
             <span className="pg-section__sub">
-              {loading ? "Loading..." : `${products.length} style${products.length !== 1 ? "s" : ""} available`}
+              {loading ? t("loading") : `${products.length} ${t("stylesAvailable")}`}
             </span>
           </div>
 
-          {/* Skeleton */}
           {loading && (
             <div className="pg-grid">
               {[1, 2, 3, 4].map((n) => (
@@ -31,16 +31,13 @@ export default function ProductGrid({ products, loading, onTryOnOpen }) {
             </div>
           )}
 
-          {/* Empty */}
           {!loading && products.length === 0 && (
             <div className="pg-empty">
               <div className="pg-empty__icon">💇🏾‍♀️</div>
-              <p className="pg-empty__text">No products available yet.</p>
-              <p className="pg-empty__sub">Check back soon — new styles are on the way!</p>
+              <p className="pg-empty__text">{t("noProducts")}</p>
             </div>
           )}
 
-          {/* Grid */}
           {!loading && products.length > 0 && (
             <div className="pg-grid">
               {products.map((p) => (
@@ -51,21 +48,16 @@ export default function ProductGrid({ products, loading, onTryOnOpen }) {
         </div>
       </div>
 
-      {/* ── AI Banner ── */}
       <section className="ai-banner" id="tryon">
         <div className="ai-banner__blob" />
         <div className="ai-banner__inner">
           <div>
             <div className="ai-banner__pill">✨ Powered by GPT Image AI</div>
-            <h2 className="ai-banner__title">Try Any Wig Before<br />You Buy It</h2>
-            <p className="ai-banner__desc">
-              Upload your selfie and our AI shows you exactly how any wig looks on your
-              face. No guessing. No returns.
-            </p>
+            <h2 className="ai-banner__title">{t("aiTryOn").replace("✨ ", "")} —<br />{t("tryAiLook").replace("✨ ", "")}</h2>
+            <p className="ai-banner__desc">{t("heroDesc")}</p>
           </div>
-          {/* ✅ Now opens modal instead of scrolling */}
           <button className="ai-banner__btn" onClick={() => onTryOnOpen()}>
-            Try It Free →
+            {t("tryAiLook")} →
           </button>
         </div>
       </section>

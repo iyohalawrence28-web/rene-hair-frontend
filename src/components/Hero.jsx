@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Hero.css";
-
 import { API_BASE, apiFetch } from "../config";
+import { useLanguage } from "../context/LanguageContext";
 
 const getImageUrl = (img) => {
   if (!img) return null;
@@ -17,6 +17,7 @@ const FALLBACK = [
 const BGS = ["ci1", "ci2", "ci3", "ci4"];
 
 export default function Hero({ onTryOnOpen }) {
+  const { t } = useLanguage();
   const [cards, setCards] = useState(FALLBACK);
 
   useEffect(() => {
@@ -47,20 +48,17 @@ export default function Hero({ onTryOnOpen }) {
       <div className="hero__blob hero__blob--2" />
       <div className="hero__inner">
         <div className="hero__left">
-          <div className="hero__pill">✦ Premium Collection 2025</div>
-          <h1 className="hero__title">Your <em>Crown</em>,<br />Your Story</h1>
-          <p className="hero__desc">
-            Luxury lace wigs crafted for queens. Try any style before you buy
-            with our AI try-on — see exactly how you'll look.
-          </p>
+          <div className="hero__pill">✦ {t("heroEyebrow")}</div>
+          <h1 className="hero__title">{t("heroTitle1")} <em>{t("heroTitleEm")}</em>,<br />{t("heroTitle2")}</h1>
+          <p className="hero__desc">{t("heroDesc")}</p>
           <div className="hero__btns">
-            <a href="#shop" className="hero__btn hero__btn--solid">Shop Collection</a>
-            <button className="hero__btn hero__btn--outline" onClick={() => onTryOnOpen()}>✨ Try AI Look</button>
+            <a href="#shop" className="hero__btn hero__btn--solid">{t("shopCollection")}</a>
+            <button className="hero__btn hero__btn--outline" onClick={() => onTryOnOpen()}>{t("tryAiLook")}</button>
           </div>
           <div className="hero__stats">
-            <div className="hero__stat"><span className="hero__stat-n">500+</span><span className="hero__stat-l">Happy Clients</span></div>
-            <div className="hero__stat"><span className="hero__stat-n">20+</span><span className="hero__stat-l">Styles</span></div>
-            <div className="hero__stat"><span className="hero__stat-n">4.9★</span><span className="hero__stat-l">Rating</span></div>
+            <div className="hero__stat"><span className="hero__stat-n">500+</span><span className="hero__stat-l">{t("happyClients")}</span></div>
+            <div className="hero__stat"><span className="hero__stat-n">20+</span><span className="hero__stat-l">{t("styles")}</span></div>
+            <div className="hero__stat"><span className="hero__stat-n">4.9★</span><span className="hero__stat-l">{t("rating")}</span></div>
           </div>
         </div>
         <div className="hero__right">
@@ -69,7 +67,7 @@ export default function Hero({ onTryOnOpen }) {
               <div className={`hero__card-img ${c.bg}`}>
                 {c.image ? <img src={c.image} alt={c.name} className="hero__card-photo" /> : <span>{c.emoji}</span>}
                 {c.badge && <span className="hero__card-badge">{c.badge}</span>}
-                <button className="hero__card-tryon" onClick={() => onTryOnOpen()}>✨ Try On</button>
+                <button className="hero__card-tryon" onClick={() => onTryOnOpen()}>{t("tryOn")}</button>
               </div>
               <div className="hero__card-body">
                 <div className="hero__card-name">{c.name}</div>
@@ -86,4 +84,3 @@ export default function Hero({ onTryOnOpen }) {
     </section>
   );
 }
-
