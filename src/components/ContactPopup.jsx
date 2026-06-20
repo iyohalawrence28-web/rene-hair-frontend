@@ -13,22 +13,9 @@ export default function ContactPopup() {
 
   useEffect(() => {
     if (dismissed) return;
-  const shop = document.getElementById("shop");
-  if (!shop) return;
-
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry.isIntersecting && !visible) {
-        setVisible(true);
-        observer.disconnect();
-      }
-    },
-    { threshold: 0, rootMargin: "0px" }
-  );
-
-  observer.observe(shop);
-  return () => observer.disconnect();
-}, [dismissed, visible]);
+  const timer = setTimeout(() => setVisible(true), 15000);
+  return () => clearTimeout(timer);
+}, [dismissed]);
 
   const handleDismiss = () => {
     setVisible(false);
