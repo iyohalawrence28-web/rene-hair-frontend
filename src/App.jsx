@@ -3,6 +3,7 @@ import MainLayout from "./layout/MainLayout";
 import Home from "./pages/Home";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
+import ProductPage from "./pages/ProductPage";
 import { LanguageProvider } from "./context/LanguageContext";
 
 // Admin
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Cancel />} />
+            <Route path="/product/:id" element={<ProductPage />} />
           </Route>
 
           {/* ── Admin Login (public) ── */}

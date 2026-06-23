@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useLanguage } from "../context/LanguageContext";
+import { useNavigate, Link } from "react-router-dom";
 import TryOnModal from "./TryOnModal";
 import "./ProductCard.css";
-import { useNavigate } from "react-router-dom";
 import { API_BASE, apiFetch } from "../config";
 
 const emptyForm = { name: "", email: "", phone: "", address: "" };
@@ -27,7 +27,9 @@ export default function ProductCard({ product, onTryOnOpen }) {
 
   const imageUrl = product.images?.length > 0 ? getImageUrl(product.images[0]) : null;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
@@ -40,9 +42,9 @@ export default function ProductCard({ product, onTryOnOpen }) {
 
   const validate = () => {
     const err = {};
-    if (!form.name.trim())                               err.name    = t("fullName").replace(" *","") + " is required";
-    if (!form.email.trim() || !form.email.includes("@")) err.email   = t("emailAddress").replace(" *","") + " is required";
-    if (!form.address.trim())                            err.address = t("deliveryAddress").replace(" *","") + " is required";
+    if (!form.name.trim())                               err.name    = "Required";
+    if (!form.email.trim() || !form.email.includes("@")) err.email   = "Valid email required";
+    if (!form.address.trim())                            err.address = "Required";
     return err;
   };
 
@@ -51,7 +53,6 @@ export default function ProductCard({ product, onTryOnOpen }) {
   const handleFormSubmit = async () => {
     const errors = validate();
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
-
     setLoading(true);
     try {
       const orderRes = await apiFetch(`${API_BASE}/api/orders`, {
@@ -59,24 +60,17 @@ export default function ProductCard({ product, onTryOnOpen }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: [{ product: product._id, quantity: 1, price: product.price }],
-          customer: {
-            name:    form.name.trim(),
-            email:   form.email.trim(),
-            phone:   form.phone.trim(),
-            address: form.address.trim(),
-          },
+          customer: { name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(), address: form.address.trim() },
           totalAmount: product.price,
           paymentStatus: "pending",
           orderStatus: "processing",
         }),
       });
-
-      if (!orderRes.ok) throw new Error("Failed to place order");
+      if (!orderRes.ok) throw new Error();
       const order = await orderRes.json();
       closeForm();
       navigate(`/success?orderId=${order._id}`);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Something went wrong. Please try again.");
       setLoading(false);
     }
@@ -84,14 +78,18 @@ export default function ProductCard({ product, onTryOnOpen }) {
 
   return (
     <>
-      <div className="pc">
+      {/* ── Clickable card → product page ── */}
+      <Link to={`/product/${product._id}`} className="pc" style={{ textDecoration: "none", display: "block" }}>
         <div className="pc__img-wrap">
           {imageUrl ? (
             <img src={imageUrl} alt={product.name} className="pc__img" loading="lazy" />
           ) : (
             <div className="pc__img-placeholder"><span>💇🏾‍♀️</span></div>
           )}
-          <button className="pc__tryon-pill" onClick={() => onTryOnOpen && onTryOnOpen(product)}>
+          <button
+            className="pc__tryon-pill"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTryOnOpen && onTryOnOpen(product); }}
+          >
             {t("tryOn")}
           </button>
         </div>
@@ -110,17 +108,24 @@ export default function ProductCard({ product, onTryOnOpen }) {
           <div className="pc__footer">
             <span className="pc__price">${product.price.toFixed(2)}</span>
             <div className="pc__actions">
-              <button className="pc__btn pc__btn--ghost" onClick={handleAddToCart}>
+              <button
+                className="pc__btn pc__btn--ghost"
+                onClick={handleAddToCart}
+              >
                 {added ? t("added") : t("addToCart")}
               </button>
-              <button className="pc__btn pc__btn--solid" onClick={() => setShowForm(true)}>
+              <button
+                className="pc__btn pc__btn--solid"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowForm(true); }}
+              >
                 {t("buyNow")}
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </Link>
 
+      {/* Buy Now Modal */}
       {showForm && (
         <div className="overlay" onClick={closeForm}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -137,7 +142,7 @@ export default function ProductCard({ product, onTryOnOpen }) {
               {[
                 { label: t("fullName"),     name: "name",  type: "text",  placeholder: "Jane Doe" },
                 { label: t("emailAddress"), name: "email", type: "email", placeholder: "jane@example.com" },
-                { label: t("phoneNumber"),  name: "phone", type: "tel",   placeholder: "+234 800 000 0000" },
+                { label: t("phoneNumber"),  name: "phone", type: "tel",   placeholder: "+359..." },
               ].map(({ label, name, type, placeholder }) => (
                 <div className="checkout-field" key={name}>
                   <label className="checkout-label">{label}</label>
