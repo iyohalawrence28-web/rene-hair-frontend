@@ -72,7 +72,7 @@ export default function ProductPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: [{ product: product._id, quantity: 1, price: product.price }],
+          items: [{ product: product._id, quantity: 1, price: product.price, selectedLength: selectedLength }],
           customer: { name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(), address: form.address.trim() },
           totalAmount: product.price,
           paymentStatus: "pending",
