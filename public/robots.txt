@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /success
+Disallow: /cancel
+
+Sitemap: https://msfabulux.com/sitemap.xml
